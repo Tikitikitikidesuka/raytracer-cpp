@@ -33,8 +33,9 @@ $(BIN_DIR)/$(TARGET_EXEC): $(OBJS) $(TEST_BINS) | $(BIN_DIR)
 	@echo Done.
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR)
-	@echo Compiling \"$<\"...
+	@echo Compiling source \"$<\"...
 	@$(CC) $(CC_FLAGS) -I $(INC_DIR) -c -o $@ $< 
+	@echo Done.
 
 $(BIN_TEST_DIR)/%: $(OBJ_TEST_DIR)/%.o | $(BIN_TEST_DIR)
 	@echo Building test \"$@\"...
@@ -42,11 +43,12 @@ $(BIN_TEST_DIR)/%: $(OBJ_TEST_DIR)/%.o | $(BIN_TEST_DIR)
 	@echo Running test \"$@\"...
 	@echo Test output:
 	@$@
-	@echo End of test output.
+	@echo Done.
 
 $(OBJ_TEST_DIR)/%.o: $(TEST_DIR)/%.cpp | $(OBJ_TEST_DIR)
-	@echo Compiling \"$<\"
+	@echo Compiling test \"$<\"...
 	@$(CC) $(CC_TEST_FLAGS) -I $(INC_DIR) -c -o $@ $<
+	@echo Done.
 
 $(BIN_DIR):
 	@mkdir -p $@
