@@ -2,6 +2,8 @@
 
 TARGET_EXEC := raytracer
 
+MAIN_SRC_NAME := main
+
 SRC_DIR := ./src
 INC_DIR := ./include
 TEST_DIR := ./test
@@ -21,25 +23,27 @@ CC_TEST_FLAGS = -O3 -std=c++11
 .PRECIOUS: $(OBJ_DIR)/%.o $(OBJ_TEST_DIR)/%.o
 
 SRCS := $(wildcard $(SRC_DIR)/*.cpp)
+SRCS:= $(filter-out $(SRC_DIR)/$(MAIN_SRC_NAME).cpp, $(SRCS))
 OBJS := $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SRCS))
+MAIN_OBJ := $(OBJ_DIR)/$(MAIN_SRC_NAME).o
 
 TEST_SRCS := $(wildcard $(TEST_DIR)/*.cpp)
 TEST_OBJS := $(patsubst $(TEST_DIR)/%.cpp, $(OBJ_TEST_DIR)/%.o, $(TEST_SRCS))
 TEST_BINS := $(patsubst $(TEST_DIR)/%.cpp, $(BIN_TEST_DIR)/%, $(TEST_SRCS))
 
-$(BIN_DIR)/$(TARGET_EXEC): $(OBJS) $(TEST_BINS) | $(BIN_DIR)
+$(BIN_DIR)/$(TARGET_EXEC): $(OBJS) $(MAIN_OBJ) $(TEST_BINS) | $(BIN_DIR)
 	@echo Building \"$(TARGET_EXEC)\" at \"$(BIN_DIR)/$(TARGET_EXEC)\"...
-	@$(CC) $(CC_FLAGS) -I $(INC_DIR) -o $@ $(OBJS)
+	$(CC) $(CC_FLAGS) -I $(INC_DIR) -o $@ $(OBJS) $(MAIN_OBJ)
 	@echo Done.
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR)
 	@echo Compiling source \"$<\"...
-	@$(CC) $(CC_FLAGS) -I $(INC_DIR) -c -o $@ $< 
+	$(CC) $(CC_FLAGS) -I $(INC_DIR) -c -o $@ $< 
 	@echo Done.
 
-$(BIN_TEST_DIR)/%: $(OBJ_TEST_DIR)/%.o | $(BIN_TEST_DIR)
+$(BIN_TEST_DIR)/%: $(OBJ_TEST_DIR)/%.o $(OBJS) | $(BIN_TEST_DIR)
 	@echo Building test \"$@\"...
-	@$(CC) $(CC_TEST_FLAGS) -I $(INC_DIR) -o $@ $^
+	$(CC) $(CC_TEST_FLAGS) -I $(INC_DIR) -o $@ $^
 	@echo Running test \"$@\"...
 	@echo Test output:
 	@$@
@@ -47,7 +51,7 @@ $(BIN_TEST_DIR)/%: $(OBJ_TEST_DIR)/%.o | $(BIN_TEST_DIR)
 
 $(OBJ_TEST_DIR)/%.o: $(TEST_DIR)/%.cpp | $(OBJ_TEST_DIR)
 	@echo Compiling test \"$<\"...
-	@$(CC) $(CC_TEST_FLAGS) -I $(INC_DIR) -c -o $@ $<
+	$(CC) $(CC_TEST_FLAGS) -I $(INC_DIR) -c -o $@ $<
 	@echo Done.
 
 $(BIN_DIR):
@@ -65,4 +69,4 @@ $(OBJ_TEST_DIR):
 .PHONY: clean
 
 clean:
-	@rm -rf $(BIN_DIR) $(OBJ_DIR)
+	@rm -rf $(BIN_DIR) $(OBJ_DIR) $(BIN_TEST_DIR) $(OBJ_TEST_DIR)
