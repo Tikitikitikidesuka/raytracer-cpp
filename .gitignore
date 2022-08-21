@@ -1,0 +1,8 @@
+# Build directory
+build/
+
+# Image results
+*.ppm
+
+# System files
+.DS_Store
