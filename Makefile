@@ -18,6 +18,8 @@ CC_TEST_FLAGS = -O3 -std=c++11
 
 # Code
 
+.PRECIOUS: $(OBJ_DIR)/%.o $(OBJ_TEST_DIR)/%.o
+
 SRCS := $(wildcard $(SRC_DIR)/*.cpp)
 OBJS := $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SRCS))
 
@@ -40,9 +42,10 @@ $(BIN_TEST_DIR)/%: $(OBJ_TEST_DIR)/%.o | $(BIN_TEST_DIR)
 	@echo Running test \"$@\"...
 	@echo Test output:
 	@$@
-	@echo End test.
+	@echo End of test output.
 
 $(OBJ_TEST_DIR)/%.o: $(TEST_DIR)/%.cpp | $(OBJ_TEST_DIR)
+	@echo Compiling \"$<\"
 	@$(CC) $(CC_TEST_FLAGS) -I $(INC_DIR) -c -o $@ $<
 
 $(BIN_DIR):
