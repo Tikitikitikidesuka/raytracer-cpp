@@ -7,18 +7,18 @@ OBJ_DIR := ./build/obj
 SRC_DIR := ./src
 INC_DIR := ./include
 
-CC = gcc
-CC_FLAGS = -O3
+CC = g++
+CC_FLAGS = -O3 -std=c++17
 
 # Code
 
-SRCS := $(wildcard $(SRC_DIR)/*.c)
-OBJS := $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRCS))
+SRCS := $(wildcard $(SRC_DIR)/*.cpp)
+OBJS := $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SRCS))
 
 $(BIN_DIR)/$(TARGET_EXEC): $(OBJS) | $(BIN_DIR)
 	$(CC) $(CC_FLAGS) -I $(INC_DIR) -o $@ $^
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR)
 	$(CC) $(CC_FLAGS) -I $(INC_DIR) -c -o $@ $< 
 
 $(BIN_DIR):
@@ -26,3 +26,8 @@ $(BIN_DIR):
 
 $(OBJ_DIR):
 	mkdir -p $@
+
+.PHONY: clean
+
+clean:
+	rm -rf $(BIN_DIR) $(OBJ_DIR)
