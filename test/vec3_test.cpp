@@ -10,6 +10,14 @@ bool Vec3_closeEnough(const Vec3 &v1, const Vec3 &v2) {
 		fabs(v1.getZ() - v2.getZ()) < 0.01;
 }
 
+void Vec3_zero_test() {
+	std::cout << "Testing Vec3 zero generator...\n";
+
+	assert(Vec3::zero() == Vec3(0.0, 0.0, 0.0));
+
+	std::cout << "Vec3 zero generator works!\n";
+}
+
 void Vec3_equals_operator_test() {
 	std::cout << "Testing Vec3 \"==\" operator...\n";
 
