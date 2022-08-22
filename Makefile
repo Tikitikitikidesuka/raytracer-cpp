@@ -32,7 +32,7 @@ TEST_SRCS := $(wildcard $(TEST_DIR)/*.cpp)
 TEST_OBJS := $(patsubst $(TEST_DIR)/%.cpp, $(OBJ_TEST_DIR)/%.o, $(TEST_SRCS))
 TEST_BINS := $(patsubst $(TEST_DIR)/%.cpp, $(BIN_TEST_DIR)/%, $(TEST_SRCS))
 
-$(BIN_DIR)/$(TARGET_EXEC): $(OBJS) $(MAIN_OBJ) $(TEST_BINS) | $(BIN_DIR)
+$(BIN_DIR)/$(TARGET_EXEC): $(OBJS) $(MAIN_OBJ) | $(BIN_DIR)
 	@echo Building \"$(TARGET_EXEC)\" at \"$(BIN_DIR)/$(TARGET_EXEC)\"...
 	$(CC) $(CC_FLAGS) -I $(INC_DIR) -o $@ $(OBJS) $(MAIN_OBJ)
 	@echo Done.
