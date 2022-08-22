@@ -14,6 +14,7 @@ BIN_TEST_DIR := ./build/bin/test
 OBJ_TEST_DIR := ./build/obj/test
 
 CC = g++
+SHELL = bash
 
 CC_FLAGS = -O3 -std=c++11 -Wall
 CC_TEST_FLAGS = -O3 -std=c++11 -Wall
@@ -66,7 +67,10 @@ $(BIN_TEST_DIR):
 $(OBJ_TEST_DIR):
 	@mkdir -p $@
 
-.PHONY: clean
+.PHONY: check clean
+
+check: $(TEST_BINS)
+	@$(SHELL) -c 'for bin in $(TEST_BINS); do $$bin; done'
 
 clean:
 	@rm -rf $(BIN_DIR) $(OBJ_DIR) $(BIN_TEST_DIR) $(OBJ_TEST_DIR)
