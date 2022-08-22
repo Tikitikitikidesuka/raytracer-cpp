@@ -15,8 +15,8 @@ OBJ_TEST_DIR := ./build/obj/test
 
 CC = g++
 
-CC_FLAGS = -O3 -std=c++11
-CC_TEST_FLAGS = -O3 -std=c++11
+CC_FLAGS = -O3 -std=c++11 -Wall
+CC_TEST_FLAGS = -O3 -std=c++11 -Wall
 
 # Code
 
