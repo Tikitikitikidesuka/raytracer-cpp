@@ -12,7 +12,7 @@ class Vec3 {
 
 		static Vec3 randomUnit();
 		static Vec3 randomInUnitSphere();
-		static Vec3 randomInUnitHemisphere(Vec3 &normal);
+		static Vec3 randomInUnitHemisphere(const Vec3 &normal);
 		
 		double getX() const;
 		double getY() const;

@@ -33,7 +33,7 @@ Vec3 Vec3::randomInUnitSphere() {
 	return randomVec;
 }
 
-Vec3 Vec3::randomInUnitHemisphere(Vec3 &normal) {
+Vec3 Vec3::randomInUnitHemisphere(const Vec3 &normal) {
 	Vec3 inUnitSphereVec = Vec3::randomInUnitSphere();
 
 	if(inUnitSphereVec.dot(normal) < 0.0)
