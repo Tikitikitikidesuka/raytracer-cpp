@@ -1,6 +1,8 @@
 #ifndef VEC3_H
 #define VEC3_H
 
+#include <iostream>
+
 class Vec3 {
 	public:
 		Vec3();
@@ -27,6 +29,7 @@ class Vec3 {
 		Vec3& operator*=(const double t);
 		Vec3& operator/=(const double t);
 
+
 		double dot(const Vec3 &v) const;
 		Vec3 cross(const Vec3 &v) const;
 		
@@ -50,6 +53,7 @@ class Vec3 {
 	friend Vec3 operator*(const double t, const Vec3 &v);
 	friend Vec3 operator/(const Vec3 &v, const double t);
 	friend Vec3 operator/(const double t, const Vec3 &v);
+	friend std::ostream& operator<<(std::ostream &out, const Vec3 &v); 
 };
 
 
