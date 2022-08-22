@@ -239,6 +239,7 @@ void Vec3_random_in_unit_hemisphere_test() {
 }
 
 int main() {
+	Vec3_zero_test();
 	Vec3_equals_operator_test();
 	Vec3_not_equals_operator_test();
 	Vec3_negative_operator_test();
