@@ -37,8 +37,8 @@ Vec3 Vec3::randomInUnitHemisphere(const Vec3 &normal) {
 	Vec3 inUnitSphereVec = Vec3::randomInUnitSphere();
 
 	if(inUnitSphereVec.dot(normal) < 0.0)
-		return inUnitSphereVec;
-	return -inUnitSphereVec;
+		return -inUnitSphereVec;
+	return inUnitSphereVec;
 }
 
 double Vec3::getX() const {
