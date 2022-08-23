@@ -23,10 +23,6 @@ class Color {
 		Color& operator-=(const Color &c);
 		Color& operator*=(const double t);
 		Color& operator/=(const double t);
-
-		double getHue() const;
-		double getSaturation() const;
-		double getValue() const;
 	
 	private:
 		Vec3 rgbData;
