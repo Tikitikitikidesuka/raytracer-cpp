@@ -3,11 +3,12 @@
 #include <cmath>
 
 #include "vec3.hpp"
+#include "random.hpp"
 
-bool Vec3_closeEnough(const Vec3 &v1, const Vec3 &v2) {
-	return  fabs(v1.getX() - v2.getX()) < 0.01 &&
-		fabs(v1.getY() - v2.getY()) < 0.01 &&
-		fabs(v1.getZ() - v2.getZ()) < 0.01;
+bool Vec3_closeEnough(const Vec3 &v1, const Vec3 &v2, double maxError) {
+	return  fabs(v1.getX() - v2.getX()) < maxError &&
+		fabs(v1.getY() - v2.getY()) < maxError &&
+		fabs(v1.getZ() - v2.getZ()) < maxError;
 }
 
 void Vec3_zero_test() {
@@ -189,8 +190,9 @@ void Vec3_reflection_test() {
 	assert(Vec3(1.0, 1.0, 0.0).reflection(Vec3(0.0, 1.0, 0.0)) == Vec3(1.0, -1.0, 0.0));
 	assert(Vec3_closeEnough(
 		Vec3(3.0, 2.0, 1.0).reflection(Vec3(0.588, 0.784, 0.196)),
-		Vec3(-1.153, -3.538, -0.384))
-	);
+		Vec3(-1.153, -3.538, -0.384),
+		0.01
+	));
 
 	std::cout << "Vec3 reflection works!\n";
 }
@@ -204,11 +206,13 @@ void Vec3_random_unit_test() {
 	Vec3 avg = Vec3::zero();
 	for(int i = 0; i < iterations; ++i) {
 		Vec3 randomVec = Vec3::randomUnit();
-		assert(fabs(1.0 - randomVec.length()) < 0.001);
 		avg += randomVec / (double) iterations;
+		assert(fabs(1.0 - randomVec.length()) < 0.001);
 	}
-	std::cout << "Vec3 random unit generator average vector length is " << avg.length() << '\n';
-	assert(avg.length() < max_error);
+
+	const double error = (Vec3(0.0, 0.0, 0.0) - avg).length();
+	std::cout << "Vec3 random unit generator average error is " << error << '\n';
+	assert(error < max_error);
 
 	std::cout << "Vec3 random unit generation works!\n";
 }
@@ -216,26 +220,60 @@ void Vec3_random_unit_test() {
 void Vec3_random_in_unit_sphere_test() {
 	std::cout << "Testing Vec3 random in unit sphere generation...\n";
 
+	const int tests = 32;
 	const int iterations = 1024;
 	const double max_error = 0.1;
 
-	double avgLength = 0.0;
-	Vec3 avgUnit = Vec3::zero();
-	for(int i = 0; i < iterations; ++i) {
-		Vec3 randomVec = Vec3::randomInUnitSphere();
-		assert(randomVec.length() <= 1.0);
-		avgUnit += randomVec.normalized() / (double) iterations;
-		avgLength += randomVec.length() / (double) iterations;
-	}
-	std::cout << "Vec3 random in unit sphere generator average vector length is " << avgUnit.length() << '\n';
-	std::cout << "Vec3 random in unit sphere generator average length is " << avgLength << '\n';
-	assert(avgUnit.length() < max_error);
-	assert(fabs(0.7937 - avgLength) < max_error);
+	double avgError = 0.0;
+	for(int n = 0; n < tests; ++n) {
+		Vec3 avg = Vec3::zero();
 
-	std::cout << "Vec3 random unit generation works!\n";
+		for(int i = 0; i < iterations; ++i) {
+			Vec3 randomVec = Vec3::randomInUnitSphere();
+			avg += randomVec / (double) iterations;
+			assert(randomVec.length() <= 1.0);
+		}
+
+		const double error = (Vec3(0.0, 0.0, 0.0) - avg).length();
+		avgError += error / (double) iterations;
+		assert(error < max_error);
+	}
+	std::cout << "Vec3 random in unit sphere generator average error is " << avgError << '\n';
+
+	std::cout << "Vec3 random unit in unit shpere generation works!\n";
 }
 
 void Vec3_random_in_unit_hemisphere_test() {
+	std::cout << "Testing Vec3 random in unit hemisphere generation...\n";
+
+	const int tests = 32;
+	const int iterations = 1024;
+	const double max_error = 0.1;
+
+	double avgError = 0.0;
+	for(int n = 0; n < tests; ++n) {
+		Vec3 avg = Vec3::zero();
+
+		const Vec3 normalTest = Vec3(
+				Random::inRange(-1.0, 1.0),
+				Random::inRange(-1.0, 1.0),
+				Random::inRange(-1.0, 1.0)
+			).normalized();
+
+		for(int i = 0; i < iterations; ++i) {
+			Vec3 randomVec = Vec3::randomInUnitHemisphere(normalTest);
+			avg += randomVec.normalized() / (double) iterations;
+			assert(randomVec.length() <= 1.0);
+		}
+
+		// 0.5236 = \int_0^1 \frac{\pi \cdot \sqrt{1 - x^2})}{2} \cdot x dx
+		const double error = (normalTest * 0.5236 - avg).length();
+		avgError += error / (double) iterations;
+		assert(error < max_error);
+	}
+	std::cout << "Vec3 random in unit hemisphere generator average error is " << avgError << '\n';
+
+	std::cout << "Vec3 random unit in hemisphere generation works!\n";
 }
 
 int main() {
