@@ -220,25 +220,20 @@ void Vec3_random_unit_test() {
 void Vec3_random_in_unit_sphere_test() {
 	std::cout << "Testing Vec3 random in unit sphere generation...\n";
 
-	const int tests = 32;
 	const int iterations = 1024;
 	const double max_error = 0.1;
 
-	double avgError = 0.0;
-	for(int n = 0; n < tests; ++n) {
-		Vec3 avg = Vec3::zero();
+	Vec3 avg = Vec3::zero();
 
-		for(int i = 0; i < iterations; ++i) {
-			Vec3 randomVec = Vec3::randomInUnitSphere();
-			avg += randomVec / (double) iterations;
-			assert(randomVec.length() <= 1.0);
-		}
-
-		const double error = (Vec3(0.0, 0.0, 0.0) - avg).length();
-		avgError += error / (double) iterations;
-		assert(error < max_error);
+	for(int i = 0; i < iterations; ++i) {
+		Vec3 randomVec = Vec3::randomInUnitSphere();
+		avg += randomVec / (double) iterations;
+		assert(randomVec.length() <= 1.0);
 	}
-	std::cout << "Vec3 random in unit sphere generator average error is " << avgError << '\n';
+
+	const double error = (Vec3(0.0, 0.0, 0.0) - avg).length();
+	std::cout << "Vec3 random in unit sphere generator average error is " << error << '\n';
+	assert(error < max_error);
 
 	std::cout << "Vec3 random unit in unit shpere generation works!\n";
 }
