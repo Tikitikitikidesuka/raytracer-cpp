@@ -3,6 +3,23 @@
 
 #include "ray3.hpp"
 
+void Ray3_set_direction_test() {
+	std::cout << "Testing Ray3 direction setter...\n";
+
+	// Ray3 direction setter should normalize before setting
+	
+	Ray3 r;
+
+	r.setDirection(Vec3(1.0, 1.0, 1.0));
+	assert(r.getDirection() == Vec3(1.0, 1.0, 1.0).normalized());
+
+	r.setDirection(Vec3(0.1, 0.1, 0.1));
+	assert(r.getDirection() == Vec3(0.1, 0.1, 0.1).normalized());
+	
+
+	std::cout << "Ray3 direction setter works!\n";
+}
+
 void Ray3_at_test() {
 	std::cout << "Testing Ray3 at...\n";
 
@@ -19,6 +36,7 @@ void Ray3_at_test() {
 }
 
 int main() {
+	Ray3_set_direction_test();
 	Ray3_at_test();
 	return 0;
 }
