@@ -86,8 +86,6 @@ void Vec3_division_by_scalar_test() {
 	std::cout << "Testing Vec3 \"/\" operator...\n";
 
 	assert(Vec3(0.0, -3.0, 6.0) / 3.0 == Vec3(0.0, -1.0, 2.0));
-	assert(3.0 / Vec3(0.0, -3.0, 6.0) == Vec3(0.0, -1.0, 2.0));
-	assert(3.0 / Vec3(0.0, 9.0, 27.0) / 3.0 == Vec3(0.0, 1.0, 3.0));
 
 	std::cout << "Vec3 \"/\" operator works!\n";
 }
