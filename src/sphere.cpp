@@ -28,7 +28,7 @@ bool Sphere::hit(const Ray3 &ray, double minDist, double maxDist, Ray3HitRecord 
 	hitRecord.position = ray.at(hitRecord.distance);
 
 	hitRecord.normal = (hitRecord.position - this->center) / this->radius;
-	if(ray.getOrigin().distanceTo(this->center) < this->radius)
+	if(ray.getDirection().dot(hitRecord.normal) > 0.0)
 		hitRecord.normal = -hitRecord.normal;
 
 	return true;
