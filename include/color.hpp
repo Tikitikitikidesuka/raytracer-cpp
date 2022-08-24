@@ -6,10 +6,13 @@
 class Color {
 	public:
 		Color();
+		Color(const Vec3 &v);
 		Color(double r, double g, double b);
 
 		static Color black();
 		static Color white();
+
+		Vec3 toVec3() const;
 
 		double getR() const;
 		double getG() const;
@@ -31,10 +34,9 @@ class Color {
 	friend bool operator!=(const Color &c1, const Color &c2);
 	friend Color operator+(const Color &c1, const Color &c2);
 	friend Color operator-(const Color &c1, const Color &c2);
-	friend Color operator*(const Color &c1, const double t);
-	friend Color operator*(const double t, const Color &c1);
-	friend Color operator/(const Color &c1, const double t);
-	friend Color operator/(const double t, const Color &c1);
+	friend Color operator*(const Color &c, const double t);
+	friend Color operator*(const double t, const Color &c);
+	friend Color operator/(const Color &c, const double t);
 	friend std::ostream& operator<<(std::ostream &out, const Color &c);
 };
 
