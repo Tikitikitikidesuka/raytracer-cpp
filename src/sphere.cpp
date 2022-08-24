@@ -26,9 +26,11 @@ bool Sphere::hit(const Ray3 &ray, double minDist, double maxDist, Ray3HitRecord 
 		return false;
 
 	hitRecord.position = ray.at(hitRecord.distance);
-
 	hitRecord.normal = (hitRecord.position - this->center) / this->radius;
-	if(ray.getDirection().dot(hitRecord.normal) > 0.0)
+
+	// Check if front or back face collision
+	bool frontFace = ray.getDirection().dot(hitRecord.normal) < 0.0;
+	if(!frontFace)
 		hitRecord.normal = -hitRecord.normal;
 
 	return true;
