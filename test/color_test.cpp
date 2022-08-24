@@ -7,7 +7,7 @@
 void Color_black_test() {
 	std::cout << "Testing Color black generator...\n";
 
-	assert(Color::black() == Color(1.0, 0.0, 0.0));
+	assert(Color::black() == Color(0.0, 0.0, 0.0));
 
 	std::cout << "Color black generator works!\n";
 }
