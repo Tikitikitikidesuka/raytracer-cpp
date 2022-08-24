@@ -39,6 +39,7 @@ class Color {
 	friend Color operator-(const Color &c1, const Color &c2);
 	friend Color operator*(const Color &c, const double t);
 	friend Color operator*(const double t, const Color &c);
+	friend Color operator*(const Color &c1, const Color &c2);
 	friend Color operator/(const Color &c, const double t);
 	friend std::ostream& operator<<(std::ostream &out, const Color &c);
 };

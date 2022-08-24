@@ -96,6 +96,14 @@ Color operator*(const double t, const Color &c) {
 	return Color(c.rgbData * t);
 }
 
+Color operator*(const Color &c1, const Color &c2) {
+	return Color(
+		c1.getR() * c2.getR(),
+		c1.getG() * c2.getG(),
+		c1.getB() * c2.getB()
+	);
+}
+
 Color operator/(const Color &c, const double t) {
 	return Color(c.rgbData / t);
 }
