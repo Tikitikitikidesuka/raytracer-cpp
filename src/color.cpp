@@ -1,5 +1,7 @@
 #include "color.hpp"
 
+#include <cmath>
+
 Color::Color()
 	: rgbData(Vec3()) {}
 
@@ -56,6 +58,16 @@ Color Color::clamped() const {
 
 	if(color.getB() > 1.0) color.setB(1.0);
 	else if(color.getB() < 0.0) color.setB(0.0);
+
+	return color;
+}
+
+Color Color::gammaCorrected(double gamma) const {
+	Color color = (*this);
+
+	color.setR(pow(color.getR(), gamma));
+	color.setG(pow(color.getG(), gamma));
+	color.setB(pow(color.getB(), gamma));
 
 	return color;
 }

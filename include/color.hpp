@@ -23,6 +23,7 @@ class Color {
 		void setB(double b);
 
 		Color clamped() const;
+		Color gammaCorrected(double gamma) const;
 
 		Color& operator+=(const Color &c);
 		Color& operator-=(const Color &c);
