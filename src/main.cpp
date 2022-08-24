@@ -3,6 +3,8 @@
 #include "vec3.hpp"
 #include "color.hpp"
 #include "ray3.hpp"
+#include "ray3hittable.hpp"
+#include "sphere.hpp"
 
 Color ray_color(const Ray3 &ray);
 void write_color_ppm(std::ostream &out, Color color);
@@ -45,6 +47,12 @@ int main() {
 }
 
 Color ray_color(const Ray3 &ray) {
+	Sphere sphere(Vec3(0.0, 0.0, -1.0), 0.5);
+
+	Ray3HitRecord hitRecord;
+	if(sphere.hit(ray, 0.0001, 100000.0, hitRecord))
+		return Color(1.0, 0.0, 0.0);
+
 	double t = 0.5 * (ray.getDirection().getY() + 1.0);
 	return (1.0 - t) * Color(1.0, 1.0, 1.0) + t * Color(0.5, 0.7, 1.0);
 }
