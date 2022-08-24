@@ -8,6 +8,9 @@ struct Ray3HitRecord {
 	Vec3 position;
 	Vec3 normal;
 	double distance;
+	bool frontFace;
+
+	void setFaceNormal(const Ray3 &ray, const Vec3 &outwardNormal);
 };
 
 class Ray3Hittable {
