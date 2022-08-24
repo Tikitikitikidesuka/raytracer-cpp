@@ -1,4 +1,5 @@
 #include <iostream>
+#include <limits>
 
 #include "vec3.hpp"
 #include "color.hpp"
