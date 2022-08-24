@@ -45,9 +45,6 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR)
 $(BIN_TEST_DIR)/%: $(OBJ_TEST_DIR)/%.o $(OBJS) | $(BIN_TEST_DIR)
 	@echo Building test \"$@\"...
 	$(CC) $(CC_TEST_FLAGS) -I $(INC_DIR) -o $@ $^
-	@echo Running test \"$@\"...
-	@echo Test output:
-	@echo Done.
 
 $(OBJ_TEST_DIR)/%.o: $(TEST_DIR)/%.cpp | $(OBJ_TEST_DIR)
 	@echo Compiling test \"$<\"...
@@ -69,7 +66,7 @@ $(OBJ_TEST_DIR):
 .PHONY: check clean
 
 check: $(TEST_BINS)
-	@$(SHELL) -c 'for bin in $(TEST_BINS); do echo Running test $$bin...; echo Test outp    ut:; $$bin; echo Done.; done'
+	@$(SHELL) -c 'for bin in $(TEST_BINS); do echo Running test $$bin...; echo Test output:; $$bin; echo Done.; done'
 
 clean:
 	@rm -rf $(BIN_DIR) $(OBJ_DIR) $(BIN_TEST_DIR) $(OBJ_TEST_DIR)
