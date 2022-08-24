@@ -13,7 +13,7 @@ void Ray3_at_test() {
 
 	// Ray3 should normalize direction automatically
 	r = Ray3(Vec3(3.59, 9.23, 19.32), Vec3(93.4, 123.2, 84.4));
-	assert(r.at(2.43).distanceTo(Vec3(4.878, 10.929, 20.487)) < 0.001);
+	assert(r.at(2.43).distanceTo(Vec3(4.878, 10.929, 20.484)) < 0.001);
 
 	std::cout << "Ray3 at works!\n";
 }

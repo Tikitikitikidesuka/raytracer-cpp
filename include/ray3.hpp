@@ -6,15 +6,15 @@
 class Ray3 {
 	public:
 		Ray3();
-		Ray3(Vec3 origin, Vec3 dir);
+		Ray3(const Vec3 &origin, const Vec3 &dir);
 
 		Vec3 getOrigin() const;
 		Vec3 getDirection() const;
 
-		void setOrigin(const Vec3 &v);
-		void setDirection(const Vec3 &v);
+		void setOrigin(const Vec3 &origin);
+		void setDirection(const Vec3 &direction);
 
-		Vec3 at(double t);
+		Vec3 at(double t) const;
 
 	private:
 		Vec3 origin;
