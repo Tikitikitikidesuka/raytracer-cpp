@@ -99,10 +99,6 @@ Vec3 operator/(const Vec3 &v, const double t) {
 	return Vec3(v.x / t, v.y / t, v.z / t);
 }
 
-Vec3 operator/(const double t, const Vec3 &v) {
-	return Vec3(v.x / t, v.y / t, v.z / t);
-}
-
 std::ostream& operator<<(std::ostream &out, const Vec3 &v) {
 	return out << "(" << v.x << ", " << v.y << ", " << v.z << ")";
 }
