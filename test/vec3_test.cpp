@@ -181,6 +181,15 @@ void Vec3_normalized_test() {
 	std::cout << "Vec3 normalization works!\n";
 }
 
+void Vec3_distance_to_test() {
+	std::cout << "Testing Vec3 distance to...\n";
+
+	assert(fabs(Vec3(0.0, 0.0, 0.0).distanceTo(Vec3(1.0, 0.0, 0.0)) - 1.0) < 0.001);
+	assert(fabs(Vec3(-2.34, 0.42, 84.23).distanceTo(Vec3(4.24, 243.43, 23.123)) - 250.662) < 0.001);
+
+	std::cout << "Vec3 distance to works!\n";
+}
+
 void Vec3_reflection_test() {
 	std::cout << "Testing Vec3 reflection...\n";
 
@@ -287,6 +296,7 @@ int main() {
 	Vec3_length_squared_test();
 	Vec3_length_test();
 	Vec3_normalized_test();
+	Vec3_distance_to_test();
 	Vec3_reflection_test();
 	Vec3_random_unit_test();
 	Vec3_random_in_unit_sphere_test();

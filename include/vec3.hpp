@@ -35,6 +35,8 @@ class Vec3 {
 		
 		Vec3 normalized() const;
 
+		double distanceTo(const Vec3 &v) const;
+
 		Vec3 reflection(const Vec3 &normal) const;
 
 		double length() const;
