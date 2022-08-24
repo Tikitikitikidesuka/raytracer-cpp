@@ -20,6 +20,19 @@ void Color_white_test() {
 	std::cout << "Color white generator works!\n";
 }
 
+void Color_from_Vec3() {
+	std::cout << "Testing Color from Vec3 generator...\n";
+
+	Vec3 v = Vec3(1.0, 1.0, 1.0);
+	Color c = Color::fromVec3(v);
+	assert(c == Color(1.0, 1.0, 1.0));
+	
+	v.setX(0.0);
+	assert(c == Color(1.0, 1.0, 1.0));
+
+	std::cout << "Color from Vec3 generator works!\n";
+}
+
 void Color_equals_operator_test() {
 	std::cout << "Testing Color \"==\" operator...\n";
 
