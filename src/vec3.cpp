@@ -155,6 +155,10 @@ Vec3 Vec3::normalized() const {
 	return *this / (*this).length();
 }
 
+double Vec3::distanceTo(const Vec3 &v) const {
+	return (v - (*this)).length();
+}
+
 Vec3 Vec3::reflection(const Vec3 &normal) const {
 	return *this - 2.0 * (*this).dot(normal) * normal;
 }
