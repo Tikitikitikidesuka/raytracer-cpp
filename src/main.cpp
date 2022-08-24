@@ -10,6 +10,8 @@
 #include "ray3hittable_list.hpp"
 #include "sphere.hpp"
 #include "random.hpp"
+#include "material.hpp"
+#include "lambertian.hpp"
 
 Color ray_color(const Ray3 &ray, const Ray3Hittable &objects, int depth);
 void write_color_ppm(std::ostream &out, Color color);
@@ -26,10 +28,18 @@ int main() {
 	//Camera
 	Camera camera(Vec3(0.0, 0.0, 0.0), 2.0 * aspect_ratio, 2.0, degToRad(35.0));
 
+	// Scene
+	//auto material_left = make_shared<LambertianMat>(Color(0.584, 0.322, 0.651));
+	//auto material_right = make_shared<LambertianMat>(Color(0.733, 0.235, 0.741));
+	//auto material_ground = make_shared<LambertianMat>(Color(0.384, 0.235, 0.408));
+	auto material_left = make_shared<LambertianMat>(Color(1.0, 0.0, 0.0));
+	auto material_right = make_shared<LambertianMat>(Color(0.0, 1.0, 0.0));
+	auto material_ground = make_shared<LambertianMat>(Color(0.0, 0.0, 1.0));
+
 	Ray3HittableList objects;
-	objects.add(make_shared<Sphere>(Vec3(0.0, -0.45, -5.0), 0.5));
-	objects.add(make_shared<Sphere>(Vec3(0.6, -0.15, -5.2), 0.4));
-	objects.add(make_shared<Sphere>(Vec3(0.0,-100.5,-10.0), 100));
+	objects.add(make_shared<Sphere>(Vec3(0.0, -0.45, -5.0), 0.5, material_left));
+	objects.add(make_shared<Sphere>(Vec3(0.6, -0.15, -5.2), 0.4, material_right));
+	objects.add(make_shared<Sphere>(Vec3(0.0,-100.5,-10.0), 100, material_ground));
 
 	std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
 
@@ -62,8 +72,11 @@ Color ray_color(const Ray3 &ray, const Ray3Hittable &objects, int depth) {
 
 	Ray3HitRecord hitRecord;
 	if(objects.hit(ray, 0.001, infinity, hitRecord)) {
-		Vec3 target = hitRecord.position + hitRecord.normal + Vec3::randomInUnitHemisphere(hitRecord.normal);
-		return Color(0.5 * ray_color(Ray3(hitRecord.position, target - hitRecord.position), objects, depth - 1));
+		Ray3 scattered;
+		Color attenuation;
+		if(hitRecord.materialPtr->scatter(ray, hitRecord, attenuation, scattered))
+			return attenuation * ray_color(scattered, objects, depth - 1);
+		return Color::black();
 	}
 
 	double t = 0.5 * (ray.getDirection().getY() + 1.0);
