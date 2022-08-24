@@ -15,16 +15,16 @@ void Color_black_test() {
 void Color_white_test() {
 	std::cout << "Testing Color white generator...\n";
 
-	assert(Color::white() == Color(0.0, 0.0, 0.0));
+	assert(Color::white() == Color(1.0, 1.0, 1.0));
 
 	std::cout << "Color white generator works!\n";
 }
 
-void Color_from_Vec3() {
+void Color_from_Vec3_test() {
 	std::cout << "Testing Color from Vec3 generator...\n";
 
 	Vec3 v = Vec3(1.0, 1.0, 1.0);
-	Color c = Color::fromVec3(v);
+	Color c = Color(v);
 	assert(c == Color(1.0, 1.0, 1.0));
 	
 	v.setX(0.0);
@@ -149,6 +149,7 @@ void Color_division_by_scalar_assignment_test() {
 int main() {
 	Color_black_test();
 	Color_white_test();
+	Color_from_Vec3_test();
 	Color_equals_operator_test();
 	Color_not_equals_operator_test();
 	Color_addition_operator_test();
