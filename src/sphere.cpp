@@ -5,8 +5,8 @@
 Sphere::Sphere()
 	: center(Vec3(0.0, 0.0, 0.0)), radius(1.0) {}
 
-Sphere::Sphere(const Vec3 &center, double radius)
-	: center(center), radius(radius) {}
+Sphere::Sphere(const Vec3 &center, double radius, std::shared_ptr<Material> materialPtr)
+	: center(center), radius(radius), materialPtr(materialPtr) {}
 
 bool Sphere::hit(const Ray3 &ray, double minDist, double maxDist, Ray3HitRecord &hitRecord) const {
 	double t = (this->center - ray.getOrigin()).dot(ray.getDirection());
@@ -28,7 +28,7 @@ bool Sphere::hit(const Ray3 &ray, double minDist, double maxDist, Ray3HitRecord 
 	hitRecord.position = ray.at(hitRecord.distance);
 	Vec3 outwardNormal = (hitRecord.position - this->center) / this->radius;
 	hitRecord.setFaceNormal(ray, outwardNormal);
-
+	hitRecord.materialPtr = this->materialPtr;
 
 	return true;
 }
