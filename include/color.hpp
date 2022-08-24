@@ -22,7 +22,7 @@ class Color {
 		void setG(double g);
 		void setB(double b);
 
-		void clamp();
+		Color clamped() const;
 
 		Color& operator+=(const Color &c);
 		Color& operator-=(const Color &c);

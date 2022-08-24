@@ -45,15 +45,19 @@ void Color::setB(double b) {
 	this->rgbData.setZ(b);
 }
 
-void Color::clamp() {
-	if(this->getR() > 1.0) this->setR(1.0);
-	else if(this->getR() < 0.0) this->setR(0.0);
+Color Color::clamped() const {
+	Color color = (*this);
 
-	if(this->getG() > 1.0) this->setG(1.0);
-	else if(this->getG() < 0.0) this->setG(0.0);
+	if(color.getR() > 1.0) color.setR(1.0);
+	else if(color.getR() < 0.0) color.setR(0.0);
 
-	if(this->getB() > 1.0) this->setB(1.0);
-	else if(this->getB() < 0.0) this->setB(0.0);
+	if(color.getG() > 1.0) color.setG(1.0);
+	else if(color.getG() < 0.0) color.setG(0.0);
+
+	if(color.getB() > 1.0) color.setB(1.0);
+	else if(color.getB() < 0.0) color.setB(0.0);
+
+	return color;
 }
 
 bool operator==(const Color &c1, const Color &c2) {
