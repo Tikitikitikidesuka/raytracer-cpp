@@ -19,7 +19,7 @@ void Ray3::setOrigin(const Vec3 &origin) {
 }
 
 void Ray3::setDirection(const Vec3 &direction) {
-	this->direction = direction;
+	this->direction = direction.normalized();
 }
 
 Vec3 Ray3::at(double t) const {
