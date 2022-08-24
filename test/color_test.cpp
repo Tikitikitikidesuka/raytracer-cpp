@@ -133,7 +133,7 @@ void Color_multiplication_by_scalar_assignment_test() {
 	c *= 2.0;
 	assert(c == Color(0.0, 1.0, 0.5));
 
-	std::cout << "Color \"*=\" operator...\n";
+	std::cout << "Color \"*=\" operator works! \n";
 }
 
 void Color_division_by_scalar_assignment_test() {
@@ -143,7 +143,7 @@ void Color_division_by_scalar_assignment_test() {
 	c /= 2.0;
 	assert(c == Color(0.0, 0.25, 0.125));
 
-	std::cout << "Color \"/=\" operator...\n";
+	std::cout << "Color \"/=\" operator works!\n";
 }
 
 int main() {
