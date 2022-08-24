@@ -11,21 +11,24 @@
 #include "sphere.hpp"
 #include "random.hpp"
 
-Color ray_color(const Ray3 &ray, const Ray3Hittable &objects);
+Color ray_color(const Ray3 &ray, const Ray3Hittable &objects, int depth);
 void write_color_ppm(std::ostream &out, Color color);
 
 int main() {
 	// Image
 	const double aspect_ratio = 16.0 / 9.0;
-	const int image_width = 1920;
+	const int image_width = 640;
 	const int image_height = static_cast<int>(image_width / aspect_ratio);
-	const int samples_per_pixel = 32;
+	const double gammaCorrection = 0.5;
+	const int samples_per_pixel = 128;
+	const int max_bounces = 32;
 	
 	//Camera
 	Camera camera(Vec3(0.0, 0.0, 0.0), 2.0 * aspect_ratio, 2.0, degToRad(35.0));
 
 	Ray3HittableList objects;
-	objects.add(make_shared<Sphere>(Vec3(0.0, 0.0, -10.0), 0.5));
+	objects.add(make_shared<Sphere>(Vec3(0.0, -0.45, -5.0), 0.5));
+	objects.add(make_shared<Sphere>(Vec3(0.6, -0.15, -5.2), 0.4));
 	objects.add(make_shared<Sphere>(Vec3(0.0,-100.5,-10.0), 100));
 
 	std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
@@ -39,10 +42,12 @@ int main() {
 				double v = (j + Random::inRange(0.0, 1.0)) / static_cast<double>(image_height - 1);
 
 				Ray3 ray = camera.getRay(u, v);
-				pixel_color += ray_color(ray, objects);
+				pixel_color += ray_color(ray, objects, max_bounces);
 			}
 
-			write_color_ppm(std::cout, pixel_color / static_cast<double>(samples_per_pixel));
+			pixel_color /= static_cast<double>(samples_per_pixel);
+			pixel_color = pixel_color.gammaCorrected(gammaCorrection);
+			write_color_ppm(std::cout, pixel_color);
 		}
 	}
 
@@ -51,10 +56,14 @@ int main() {
 	return 0;
 }
 
-Color ray_color(const Ray3 &ray, const Ray3Hittable &objects) {
+Color ray_color(const Ray3 &ray, const Ray3Hittable &objects, int depth) {
+	if(depth <= 0)
+		return Color::black();
+
 	Ray3HitRecord hitRecord;
-	if(objects.hit(ray, 0.0001, std::numeric_limits<double>::infinity(), hitRecord)) {
-		return Color(0.5 * (hitRecord.normal + Color::white().toVec3()));
+	if(objects.hit(ray, 0.001, infinity, hitRecord)) {
+		Vec3 target = hitRecord.position + hitRecord.normal + Vec3::randomInUnitHemisphere(hitRecord.normal);
+		return Color(0.5 * ray_color(Ray3(hitRecord.position, target - hitRecord.position), objects, depth - 1));
 	}
 
 	double t = 0.5 * (ray.getDirection().getY() + 1.0);
