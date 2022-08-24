@@ -67,7 +67,7 @@ $(OBJ_TEST_DIR):
 
 check: $(TEST_BINS)
 	@$(SHELL) -c '								\
-	for bin in build/bin/test/color_test build/bin/test/random_test;	\
+	for bin in $(TEST_BINS);	\
 	do									\
 		echo Running test $$bin...;					\
 		if ! $$bin;							\
