@@ -16,6 +16,7 @@ struct Ray3HitRecord {
 class Ray3Hittable {
 	public:
 		virtual bool hit(const Ray3 &ray, double minDist, double maxDist, Ray3HitRecord &hitRecord) const = 0;
+		virtual ~Ray3Hittable() = default;
 };
 
 #endif
