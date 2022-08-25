@@ -163,6 +163,13 @@ Vec3 Vec3::reflection(const Vec3 &normal) const {
 	return *this - 2.0 * (*this).dot(normal) * normal;
 }
 
+Vec3 Vec3::refraction(const Vec3 &normal, const double n1OverN2) const {
+	double cosTheta = fmin(-(*this).dot(normal), 1.0);
+	Vec3 outPerpendicular = n1OverN2 * ((*this) + cosTheta * normal);
+	Vec3 outParallel = -sqrt(fabs(1.0 - outPerpendicular.lengthSquared())) * normal;
+	return outPerpendicular + outParallel;
+}
+
 double Vec3::length() const {
 	return sqrt(this->lengthSquared());
 }
