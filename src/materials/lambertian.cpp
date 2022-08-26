@@ -1,4 +1,4 @@
-#include "lambertian.hpp"
+#include "materials/lambertian.hpp"
 
 LambertianMat::LambertianMat(const Color &albedo)
 	: albedo(albedo) {}

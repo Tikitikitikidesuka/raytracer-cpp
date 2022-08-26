@@ -11,9 +11,9 @@
 #include "sphere.hpp"
 #include "random.hpp"
 #include "material.hpp"
-#include "lambertian.hpp"
-#include "metal.hpp"
-#include "dielectric.hpp"
+#include "materials/lambertian.hpp"
+#include "materials/metal.hpp"
+#include "materials/dielectric.hpp"
 #include "triangle.hpp"
 
 Color ray_color(const Ray3 &ray, const Ray3Hittable &objects, int depth);

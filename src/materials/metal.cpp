@@ -1,4 +1,4 @@
-#include "metal.hpp"
+#include "materials/metal.hpp"
 
 MetalMat::MetalMat(const Color &albedo, const double roughness)
 	: albedo(albedo), roughness(roughness) {}
