@@ -1,4 +1,4 @@
-#include "sphere.hpp"
+#include "hittables/sphere.hpp"
 
 #include <cmath>
 

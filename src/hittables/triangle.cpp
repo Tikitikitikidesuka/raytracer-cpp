@@ -1,4 +1,4 @@
-#include "triangle.hpp"
+#include "hittables/triangle.hpp"
 
 #include <cmath>
 

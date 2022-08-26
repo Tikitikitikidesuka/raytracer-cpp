@@ -8,13 +8,13 @@
 #include "camera.hpp"
 #include "ray3hittable.hpp"
 #include "ray3hittable_list.hpp"
-#include "sphere.hpp"
+#include "hittables/sphere.hpp"
 #include "random.hpp"
 #include "material.hpp"
 #include "materials/lambertian.hpp"
 #include "materials/metal.hpp"
 #include "materials/dielectric.hpp"
-#include "triangle.hpp"
+#include "hittables/triangle.hpp"
 
 Color ray_color(const Ray3 &ray, const Ray3Hittable &objects, int depth);
 void write_color_ppm(std::ostream &out, Color color);
