@@ -1,305 +1,292 @@
-#include <iostream>
-#include <cassert>
+#include "gtest/gtest.h"
+
 #include <cmath>
-
 #include "vec3.hpp"
-#include "random.hpp"
 
-bool Vec3_closeEnough(const Vec3 &v1, const Vec3 &v2, double maxError) {
+const double MAX_ERROR = 0.001;
+const double MAX_RANDOM_ERROR = 0.01;
+const int RANDOM_ITERATIONS = 1024;
+
+bool closeEnough(const Vec3 &v1, const Vec3 &v2, double maxError) {
 	return  fabs(v1.getX() - v2.getX()) < maxError &&
 		fabs(v1.getY() - v2.getY()) < maxError &&
 		fabs(v1.getZ() - v2.getZ()) < maxError;
 }
 
-void Vec3_zero_test() {
-	std::cout << "Testing Vec3 zero generator...\n";
-
-	assert(Vec3::zero() == Vec3(0.0, 0.0, 0.0));
-
-	std::cout << "Vec3 zero generator works!\n";
+TEST(Vec3Test, GeneratesZero) {
+	EXPECT_EQ(Vec3::zero(), Vec3(0.0, 0.0, 0.0));
 }
 
-void Vec3_equals_operator_test() {
-	std::cout << "Testing Vec3 \"==\" operator...\n";
-
-	assert(Vec3(0.0, -1.0, 2.0) == Vec3(0.0, -1.0, 2.0));
-	assert(!(Vec3(0.0, -1.0, 2.0) == Vec3(0.0, 1.0, 2.0)));
-
-	Vec3 v = Vec3(0.0, 2.2, 4.4);
-	assert(v == v);
-
-	std::cout << "Vec3 \"==\" operator works!\n";
+TEST(Vec3Test, EqualsDifferentInstance) {
+	Vec3 v1 = Vec3(0.5, -2.0, 0.125);
+	Vec3 v2 = Vec3(0.5, -2.0, 0.125);
+	EXPECT_EQ(v1, v2);
 }
 
-void Vec3_not_equals_operator_test() {
-	std::cout << "Testing Vec3 \"!=\" operator...\n";
-
-	assert(Vec3(0.0, 1.0, 2.0) != Vec3(0.0, -1.0, 2.0));
-	assert(!(Vec3(0.0, -1.0, 2.0) != Vec3(0.0, -1.0, 2.0)));
-
-	Vec3 v = Vec3(0.0, 2.2, 4.4);
-	assert(!(v != v));
-
-	std::cout << "Vec3 \"!=\" operator works!\n";
+TEST(Vec3Test, EqualsConstant) {
+	Vec3 v1 = Vec3(0.5, -2.0, 0.125);
+	EXPECT_EQ(v1, Vec3(0.5, -2.0, 0.125));
+	EXPECT_EQ(Vec3(0.5, -2.0, 0.125), v1);
 }
 
-void Vec3_negative_operator_test() {
-	std::cout << "Testing Vec3 unary \"-\" operator...\n";
+TEST(Vec3Test, EqualsItself) {
+	Vec3 v = Vec3(0.5, -2.0, 0.125);
+	EXPECT_EQ(v, v);
+}
 
-	assert(-Vec3(0.0, -1.0, 2.0) == Vec3(0.0, 1.0, -2.0));
-	assert(-Vec3(0.0, 0.0, 0.0) == Vec3(0.0, 0.0, 0.0));
+TEST(Vec3Test, NotEqualsDifferentInstance) {
+	Vec3 v2;
+	Vec3 v1 = Vec3(0.5, -2.0, 0.125);
+
+	v2 = Vec3(0.25, -2.0, 0.125);
+	EXPECT_NE(v1, v2);
 	
-	std::cout << "Vec3 unary \"-\" operator works!\n";
+	v2 = Vec3(0.5, -2.5, 0.125);
+	EXPECT_NE(v1, v2);
+
+	v2 = Vec3(0.5, -2.0, -0.125);
+	EXPECT_NE(v1, v2);
 }
 
-void Vec3_addition_operator_test() {
-	std::cout << "Testing Vec3 \"+\" operator...\n";
+TEST(Vec3Test, NotEqualsConstant) {
+	Vec3 v1 = Vec3(0.5, -2.0, 0.125);
 
-	assert(Vec3(0.0, -1.0, 2.0) + Vec3(0.0, 1.0, -2.0) == Vec3(0.0, 0.0, 0.0));
-	assert(Vec3(0.0, 1.0, 2.0) + Vec3(0.0, 1.0, 2.0) == Vec3(0.0, 2.0, 4.0));
-	assert(Vec3(0.0, 0.0, 0.0) + Vec3(1.0, 1.0, 1.0) + Vec3(1.0, 1.0, 1.0) == Vec3(2.0, 2.0, 2.0));
+	EXPECT_NE(v1, Vec3(0.25, -2.0, 0.125));
+	EXPECT_NE(Vec3(0.25, -2.0, 0.125), v1);
 
-	std::cout << "Vec3 \"+\" operator works!\n";
+	EXPECT_NE(v1, Vec3(0.5, -2.5, 0.125));
+	EXPECT_NE(Vec3(0.5, -2.5, 0.125), v1);
+
+	EXPECT_NE(v1, Vec3(0.5, -2.0, -0.125));
+	EXPECT_NE(Vec3(0.5, -2.0, -0.125), v1);
 }
 
-void Vec3_subtraction_operator_test() {
-	std::cout << "Testing Vec3 \"-\" operator...\n";
-
-	assert(Vec3(0.0, -1.0, 2.0) - Vec3(0.0, -1.0, 2.0) == Vec3(0.0, 0.0, 0.0));
-	assert(Vec3(0.0, 2.0, 4.0) - Vec3(0.0, 3.0, 2.0) == Vec3(0.0, -1.0, 2.0));
-	assert(Vec3(0.0, 0.0, 0.0) - Vec3(1.0, 1.0, 1.0) - Vec3(1.0, 1.0, 1.0) == Vec3(-2.0, -2.0, -2.0));
-
-	std::cout << "Vec3 \"-\" operator works!";
+TEST(Vec3Test, NotNotEqualsItself) {
+	Vec3 v1 = Vec3(0.5, -2.0, 0.125);
+	EXPECT_FALSE(v1 != v1);
 }
 
-void Vec3_multiplication_by_scalar_test() {
-	std::cout << "Testing Vec3 \"*\" operator...\n";
-
-	assert(Vec3(0.0, -1.0, 2.0) * 3.0 == Vec3(0.0, -3.0, 6.0));
-	assert(3.0 * Vec3(0.0, -1.0, 2.0) == Vec3(0.0, -3.0, 6.0));
-	assert(3.0 * Vec3(0.0, -1.0, 2.0) * 3.0 == Vec3(0.0, -9.0, 18.0));
-
-	std::cout << "Vec3 \"*\" operator works!\n";
+TEST(Vec3Test, NegativeOperator) {
+	EXPECT_EQ(Vec3(0.5, -2.0, 0.125), -Vec3(-0.5, 2.0, -0.125));
+	EXPECT_EQ(Vec3(0.0, 0.0, 0.0), -Vec3(0.0, 0.0, 0.0));
 }
 
-void Vec3_division_by_scalar_test() {
-	std::cout << "Testing Vec3 \"/\" operator...\n";
-
-	assert(Vec3(0.0, -3.0, 6.0) / 3.0 == Vec3(0.0, -1.0, 2.0));
-
-	std::cout << "Vec3 \"/\" operator works!\n";
+TEST(Vec3Test, AdditionOperator) {
+	EXPECT_TRUE(closeEnough(
+		Vec3(0.5, -2.0, 0.125) + Vec3(0.123, -21.3, 3.135),
+		Vec3(0.623, -23.3, 3.26),
+		MAX_ERROR
+	));
 }
 
-void Vec3_addition_assignment_operator_test() {
-	std::cout << "Testing Vec3 \"+=\" operator...\n";
-
-	Vec3 v = Vec3(0.0, 1.0, 2.0);
-	v += Vec3(0.0, 1.0, 2.0);
-	assert(v == Vec3(0.0, 2.0, 4.0));
-
-	v += v;
-	assert(v == Vec3(0.0, 4.0, 8.0));
-
-	std::cout << "Vec3 \"+=\" operator works!\n";
+TEST(Vec3Test, SubtractionOperator) {
+	EXPECT_TRUE(closeEnough(
+		Vec3(0.5, -2.0, 0.125) - Vec3(0.123, -21.3, 3.135),
+		Vec3(0.377, 19.3, -3.01),
+		MAX_ERROR
+	));
 }
 
-void Vec3_subtraction_assignment_operator_test() {
-	std::cout << "Testing Vec3 \"-=\" operator...\n";
-
-	Vec3 v = Vec3(0.0, 1.0, 2.0);
-	v -= Vec3(0.0, -1.0, -2.0);
-	assert(v == Vec3(0.0, 2.0, 4.0));
-
-	std::cout << "Vec3 \"-=\" operator works!\n";
-}
-
-void Vec3_multiplication_by_scalar_assignment_test() {
-	std::cout << "Testing Vec3 \"*=\" operator...\n";
-
-	Vec3 v = Vec3(0.0, -1.0, 2.0);
-	v *= 6.0;
-	assert(v == Vec3(0.0, -6.0, 12.0));
-
-	std::cout << "Vec3 \"*=\" operator works!\n";
-}
-
-void Vec3_division_by_scalar_assignment_test() {
-	std::cout << "Testing Vec3 \"/=\" operator...\n";
-
-	Vec3 v = Vec3(0.0, -9.0, 6.0);
-	v /= 3.0;
-	assert(v == Vec3(0.0, -3.0, 2.0));
-
-	std::cout << "Vec3 \"/=\" operator works!\n";
-}
-
-void Vec3_dot_product_test() {
-	std::cout << "Testing Vec3 dot product...\n";
-
-	assert(Vec3(0.0, -1.0, 2.0).dot(Vec3(2.0, -3.0, 4.0)) == 11.0);
-	assert(Vec3(0.0, 1.0, 0.0).dot(Vec3(0.0, 0.0, 1.0)) == 0.0);
-
-	std::cout << "Vec3 dot product works!\n";
-}
-
-void Vec3_cross_product_test() {
-	std::cout << "Testing Vec3 cross product...\n";
-
-	assert(Vec3(0.0, -1.0, 2.0).cross(Vec3(2.0, -3.0, 4.0)) == Vec3(2.0, 4.0, 2.0));
-	assert(Vec3(0.0, 1.0, 0.0).cross(Vec3(0.0, -1.0, 0.0)) == Vec3(0.0, 0.0, 0.0));
-
-	std::cout << "Vec3 cross product works!\n";
-}
-
-void Vec3_length_squared_test() {
-	std::cout << "Testing Vec3 length squared...\n";
-
-	assert(fabs(1.0 - Vec3(0.0, 1.0, 0.0).lengthSquared()) < 0.001);
-	assert(fabs(95.18 - Vec3(2.3, 4.2, -8.5).lengthSquared()) < 0.001);
-	assert(fabs(24.0773 - Vec3(-1.3, 4.23, -2.12).lengthSquared()) < 0.001);
-
-	std::cout << "Vec3 length squared works!\n";
-}
-
-void Vec3_length_test() {
-	std::cout << "Testing Vec3 length...\n";
-
-	assert(fabs(1.0 - Vec3(0.0, 1.0, 0.0).length()) < 0.001);
-	assert(fabs( 9.756 - Vec3(2.3, 4.2, -8.5).length()) < 0.001);
-	assert(fabs(4.9068 - Vec3(-1.3, 4.23, -2.12).length()) < 0.001);
-
-	std::cout << "Vec3 length works!\n";
-}
-
-void Vec3_normalized_test() {
-	std::cout << "Tesing Vec3 normalization...\n";
-
-	assert(fabs(1.0 - Vec3(0.0, 1.0, 0.0).normalized().length()) < 0.001);
-	assert(fabs(1.0 - Vec3(2.3, 4.2, -8.5).normalized().length()) < 0.001);
-	assert(fabs(1.0 - Vec3(-1.3, 4.23, -2.12).normalized().length()) < 0.001);
-
-	std::cout << "Vec3 normalization works!\n";
-}
-
-void Vec3_distance_to_test() {
-	std::cout << "Testing Vec3 distance to...\n";
-
-	assert(fabs(Vec3(0.0, 0.0, 0.0).distanceTo(Vec3(1.0, 0.0, 0.0)) - 1.0) < 0.001);
-	assert(fabs(Vec3(-2.34, 0.42, 84.23).distanceTo(Vec3(4.24, 243.43, 23.123)) - 250.662) < 0.001);
-
-	std::cout << "Vec3 distance to works!\n";
-}
-
-void Vec3_reflection_test() {
-	std::cout << "Testing Vec3 reflection...\n";
-
-	assert(Vec3(1.0, 1.0, 0.0).reflection(Vec3(0.0, -1.0, 0.0)) == Vec3(1.0, -1.0, 0.0));
-	assert(Vec3(1.0, 1.0, 0.0).reflection(Vec3(0.0, 1.0, 0.0)) == Vec3(1.0, -1.0, 0.0));
-	assert(Vec3_closeEnough(
-		Vec3(3.0, 2.0, 1.0).reflection(Vec3(0.588, 0.784, 0.196)),
-		Vec3(-1.153, -3.538, -0.384),
-		0.01
+TEST(Vec3Test, MultiplicationByScalar) {
+	EXPECT_TRUE(closeEnough(
+		Vec3(0.5, -2.0, 0.125) * 3.1415,
+		Vec3(1.571, -6.283, 0.3927),
+		MAX_ERROR
 	));
 
-	std::cout << "Vec3 reflection works!\n";
+	EXPECT_TRUE(closeEnough(
+		3.1415 * Vec3(0.5, -2.0, 0.125),
+		Vec3(1.571, -6.283, 0.3927),
+		MAX_ERROR
+	));
+
+	EXPECT_TRUE(closeEnough(
+		-3.1415 * Vec3(0.5, -2.0, 0.125),
+		Vec3(-1.571, 6.283, -0.3927),
+		MAX_ERROR
+	));
+
+	EXPECT_TRUE(closeEnough(
+		Vec3(0.5, -2.0, 0.125) * -3.1415,
+		Vec3(-1.571, 6.283, -0.3927),
+		MAX_ERROR
+	));
 }
 
-void Vec3_random_unit_test() {
-	std::cout << "Testing Vec3 random unit generation...\n";
+TEST(Vec3Test, DivisionByScalar) {
+	EXPECT_TRUE(closeEnough(
+		Vec3(0.5, -2.0, 0.125) / 3.1415,
+		Vec3(0.1592, -0.6366, 0.0398),
+		MAX_ERROR
+	));
 
-	const int iterations = 1024;
-	const double max_error = 0.1;
-
-	Vec3 avg = Vec3::zero();
-	for(int i = 0; i < iterations; ++i) {
-		Vec3 randomVec = Vec3::randomUnit();
-		avg += randomVec / (double) iterations;
-		assert(fabs(1.0 - randomVec.length()) < 0.001);
-	}
-
-	const double error = (Vec3(0.0, 0.0, 0.0) - avg).length();
-	std::cout << "Vec3 random unit generator average error is " << error << '\n';
-	assert(error < max_error);
-
-	std::cout << "Vec3 random unit generation works!\n";
+	EXPECT_TRUE(closeEnough(
+		Vec3(0.5, -2.0, 0.125) / -3.1415,
+		Vec3(-0.1592, 0.6366, -0.0398),
+		MAX_ERROR
+	));
 }
 
-void Vec3_random_in_unit_sphere_test() {
-	std::cout << "Testing Vec3 random in unit sphere generation...\n";
-
-	const int iterations = 1024;
-	const double max_error = 0.1;
-
-	Vec3 avg = Vec3::zero();
-
-	for(int i = 0; i < iterations; ++i) {
-		Vec3 randomVec = Vec3::randomInUnitSphere();
-		avg += randomVec / (double) iterations;
-		assert(randomVec.length() <= 1.0);
-	}
-
-	const double error = (Vec3(0.0, 0.0, 0.0) - avg).length();
-	std::cout << "Vec3 random in unit sphere generator average error is " << error << '\n';
-	assert(error < max_error);
-
-	std::cout << "Vec3 random unit in unit shpere generation works!\n";
+TEST(Vec3Test, AdditionAssignmentOperatorDifferentInstance) {
+	Vec3 v1 = Vec3(1.42, 9.23, -12.24);
+	Vec3 v2 = Vec3(4.12, -23.1, 3.43);
+	v1 += v2;
+	EXPECT_TRUE(closeEnough(
+		v1, Vec3(5.54, -13.87, -8.81), MAX_ERROR
+	));
 }
 
-void Vec3_random_in_unit_hemisphere_test() {
-	std::cout << "Testing Vec3 random in unit hemisphere generation...\n";
-
-	const int tests = 32;
-	const int iterations = 1024;
-	const double max_error = 0.1;
-
-	double avgError = 0.0;
-	for(int n = 0; n < tests; ++n) {
-		Vec3 avg = Vec3::zero();
-
-		const Vec3 normalTest = Vec3(
-				Random::inRange(-1.0, 1.0),
-				Random::inRange(-1.0, 1.0),
-				Random::inRange(-1.0, 1.0)
-			).normalized();
-
-		for(int i = 0; i < iterations; ++i) {
-			Vec3 randomVec = Vec3::randomInUnitHemisphere(normalTest);
-			avg += randomVec.normalized() / (double) iterations;
-			assert(randomVec.length() <= 1.0);
-		}
-
-		// 0.5236 = \int_0^1 \frac{\pi \cdot \sqrt{1 - x^2})}{2} \cdot x dx
-		const double error = (normalTest * 0.5236 - avg).length();
-		avgError += error / (double) iterations;
-		assert(error < max_error);
-	}
-	std::cout << "Vec3 random in unit hemisphere generator average error is " << avgError << '\n';
-
-	std::cout << "Vec3 random unit in hemisphere generation works!\n";
+TEST(Vec3Test, AdditionAssignmentOperatorConstant) {
+	Vec3 v = Vec3(1.42, 9.23, -12.24);
+	v += Vec3(4.12, -23.1, 3.43);
+	EXPECT_TRUE(closeEnough(
+		v, Vec3(5.54, -13.87, -8.81), MAX_ERROR
+	));
 }
 
-int main() {
-	Vec3_zero_test();
-	Vec3_equals_operator_test();
-	Vec3_not_equals_operator_test();
-	Vec3_negative_operator_test();
-	Vec3_addition_operator_test();
-	Vec3_subtraction_operator_test();
-	Vec3_multiplication_by_scalar_test();
-	Vec3_division_by_scalar_test();
-	Vec3_addition_assignment_operator_test();
-	Vec3_subtraction_assignment_operator_test();
-	Vec3_multiplication_by_scalar_assignment_test();
-	Vec3_division_by_scalar_assignment_test();
-	Vec3_dot_product_test();
-	Vec3_cross_product_test();
-	Vec3_length_squared_test();
-	Vec3_length_test();
-	Vec3_normalized_test();
-	Vec3_distance_to_test();
-	Vec3_reflection_test();
-	Vec3_random_unit_test();
-	Vec3_random_in_unit_sphere_test();
-	Vec3_random_in_unit_hemisphere_test();
-	return 0;
+TEST(Vec3Test, AdditionAssignmentOperatorItself) {
+	Vec3 v = Vec3(1.42, 9.23, -12.24);
+	v += v;
+	EXPECT_TRUE(closeEnough(
+		v, Vec3(2.84, 18.46, -24.48), MAX_ERROR
+	));
+}
+
+TEST(Vec3Test, SubtractionAssignmentOperatorDifferentInstance) {
+	Vec3 v1 = Vec3(1.42, 9.23, -12.24);
+	Vec3 v2 = Vec3(4.12, -23.1, 3.43);
+	v1 -= v2;
+	EXPECT_TRUE(closeEnough(
+		v1, Vec3(-2.7, 32.33, -15.67), MAX_ERROR
+	));
+}
+
+TEST(Vec3Test, SubtractionAssignmentOperatorConstant) {
+	Vec3 v = Vec3(1.42, 9.23, -12.24);
+	v -= Vec3(4.12, -23.1, 3.43);
+	EXPECT_TRUE(closeEnough(
+		v, Vec3(-2.7, 32.33, -15.67), MAX_ERROR
+	));
+}
+
+TEST(Vec3Test, MultiplicationByScalarAssignmentOperator) {
+	Vec3 v;
+
+	v = Vec3(3.12, -4.23, 9.21);
+	v *= 3.1415;
+	EXPECT_TRUE(closeEnough(
+		v, Vec3(9.801, -13.288, 28.933), MAX_ERROR
+	));
+
+	v = Vec3(3.12, -4.23, 9.21);
+	v *= -3.1415;
+	EXPECT_TRUE(closeEnough(
+		v, Vec3(-9.801, 13.288, -28.933), MAX_ERROR
+	));
+}
+
+TEST(Vec3Test, DivisionByScalarAssignmentOperator) {
+	Vec3 v;
+
+	v = Vec3(3.12, -4.23, 9.21);
+	v /= 3.1415;
+	EXPECT_TRUE(closeEnough(
+		v, Vec3(0.9931, -1.346, 2.9317), MAX_ERROR
+	));
+
+	v = Vec3(3.12, -4.23, 9.21);
+	v /= -3.1415;
+	EXPECT_TRUE(closeEnough(
+		v, Vec3(-0.9931, 1.346, -2.9317), MAX_ERROR
+	));
+}
+
+TEST(Vec3Test, DotProduct) {
+	EXPECT_DOUBLE_EQ(
+		Vec3(0.34, -2.12, 4.23).dot(Vec3(0.43, -5.23, -3.84)), -5.0094
+	);
+}
+
+TEST(Vec3Test, CrossProduct) {
+	EXPECT_TRUE(closeEnough(
+		Vec3(3.43, -4.32, 0.03).cross(Vec3(-9.23, -7.48, -2.35)),
+		Vec3(10.3764, 7.7836, -65.53),
+		MAX_ERROR
+	));
+
+	EXPECT_TRUE(closeEnough(
+		Vec3(-9.23, -7.48, -2.35).cross(Vec3(3.43, -4.32, 0.03)),
+		Vec3(-10.3764, -7.7836, 65.53),
+		MAX_ERROR
+	));
+}
+
+TEST(Vec3Test, LengthSquared) {
+	EXPECT_DOUBLE_EQ(Vec3(8.23, 9.43, -2.38).lengthSquared(), 162.3222);
+	EXPECT_DOUBLE_EQ(Vec3(0.0, 0.0, 0.0).lengthSquared(), 0.0);
+}
+
+TEST(Vec3Test, Length) {
+	EXPECT_NEAR(Vec3(8.23, 9.43, -2.38).length(), 12.74057299, MAX_ERROR);
+	EXPECT_DOUBLE_EQ(Vec3(0.0, 0.0, 0.0).length(), 0.0);
+}
+
+TEST(Vec3Test, Normalization) {
+	EXPECT_TRUE(closeEnough(
+		Vec3(7.34, -9.28, 7.37).normalized(),
+		Vec3(0.52656, -0.66573, 0.52871),
+		MAX_ERROR
+	));
+
+	// User must make sure that Vec3::zero()
+	//EXPECT_ANY_THROW(Vec3(0.0, 0.0, 0.0).normalized());
+}
+
+TEST(Vec3Test, DistanceTo) {
+	EXPECT_NEAR(
+		Vec3(4.24, -9.48, 1.44).distanceTo(Vec3(0.23, -4.12, -8.54)),
+		12.01707535,
+		MAX_ERROR
+	);
+
+	Vec3 v = Vec3(4.24, -9.48, 1.44);
+	EXPECT_DOUBLE_EQ(v.distanceTo(v), 0.0);
+}
+
+TEST(Vec3Test, Reflection) {
+	Vec3 normal = Vec3(0.0362084247, 0.8860414516, -0.4621898918);
+
+	EXPECT_TRUE(closeEnough(
+		Vec3(8.12, 9.34, -2.83).reflection(normal),
+		Vec3(7.40469, -8.16399, 6.30069),
+		MAX_ERROR
+	));
+
+	EXPECT_TRUE(closeEnough(
+		Vec3(8.12, 9.34, -2.83).reflection(normal),
+		Vec3(7.40469, -8.16399, 6.30069),
+		MAX_ERROR
+	));
+
+	// User must make sure that the normal parameter is normalized
+	//EXPECT_TRUE(closeEnough(
+	//	Vec3(8.12, 9.34, -2.83).reflection(Vec3(normal * 3.1415)),
+	//	Vec3(7.40469, -8.16399, 6.30069),
+	//	MAX_ERROR
+	//));
+}
+
+TEST(Vec3Test, RandomUnitGeneration) {
+	
+}
+
+TEST(Vec3Test, RandomInUnitSphereGeneration) {
+}
+
+TEST(Vec3Test, RandomInUnitHemisphereGeneration) {
+}
+
+int main(int argc, char** argv) {
+	::testing::InitGoogleTest(&argc, argv);
+	return RUN_ALL_TESTS();
 }
