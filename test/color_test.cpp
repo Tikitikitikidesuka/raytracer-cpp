@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cassert>
 
+#include "vec3.hpp"
 #include "color.hpp"
 
 void Color_black_test() {
