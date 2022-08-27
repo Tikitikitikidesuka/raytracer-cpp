@@ -2,10 +2,11 @@
 
 #include <cmath>
 #include "vec3.hpp"
+#include "random.hpp"
 
 const double MAX_ERROR = 0.001;
-const double MAX_RANDOM_ERROR = 0.01;
-const int RANDOM_ITERATIONS = 1024;
+const double MAX_RANDOM_ERROR = 0.05;
+const int RANDOM_ITERATIONS = 4096;
 
 bool closeEnough(const Vec3 &v1, const Vec3 &v2, double maxError) {
 	return  fabs(v1.getX() - v2.getX()) < maxError &&
@@ -254,7 +255,23 @@ TEST(Vec3Test, DistanceTo) {
 }
 
 TEST(Vec3Test, Reflection) {
-	Vec3 normal = Vec3(0.0362084247, 0.8860414516, -0.4621898918);
+	Vec3 normal;
+
+	normal = Vec3(0.0, -1.0, 0.0);
+
+	EXPECT_TRUE(closeEnough(
+		Vec3(1.0, 1.0, 0.0).reflection(Vec3(0.0, -1.0, 0.0)),
+		Vec3(1.0, -1.0, 0.0),
+		MAX_ERROR
+	));
+
+	EXPECT_TRUE(closeEnough(
+		Vec3(1.0, 1.0, 0.0).reflection(Vec3(0.0, 1.0, 0.0)),
+		Vec3(1.0, -1.0, 0.0),
+		MAX_ERROR
+	));
+
+	normal = Vec3(0.0362084247, 0.8860414516, -0.4621898918);
 
 	EXPECT_TRUE(closeEnough(
 		Vec3(8.12, 9.34, -2.83).reflection(normal),
@@ -263,7 +280,7 @@ TEST(Vec3Test, Reflection) {
 	));
 
 	EXPECT_TRUE(closeEnough(
-		Vec3(8.12, 9.34, -2.83).reflection(normal),
+		Vec3(8.12, 9.34, -2.83).reflection(-normal),
 		Vec3(7.40469, -8.16399, 6.30069),
 		MAX_ERROR
 	));
@@ -277,13 +294,56 @@ TEST(Vec3Test, Reflection) {
 }
 
 TEST(Vec3Test, RandomUnitGeneration) {
-	
+	Vec3 avg = Vec3::zero();
+
+	for(int i = 0; i < RANDOM_ITERATIONS; ++i) {
+		Vec3 randomVec = Vec3::randomUnit();
+		EXPECT_DOUBLE_EQ(randomVec.length(), 1.0);
+		avg += randomVec / RANDOM_ITERATIONS;
+	}
+
+	const double error = avg.length();
+	EXPECT_LT(error, MAX_RANDOM_ERROR);
 }
 
 TEST(Vec3Test, RandomInUnitSphereGeneration) {
+	Vec3 avg = Vec3::zero();
+
+	for(int i = 0; i < RANDOM_ITERATIONS; ++i) {
+		Vec3 randomVec = Vec3::randomInUnitSphere();
+		EXPECT_LE(randomVec.length(), 1.0);
+		avg += randomVec / RANDOM_ITERATIONS;
+	}
+
+	const double error = avg.length();
+	EXPECT_LT(error, MAX_RANDOM_ERROR);
 }
 
 TEST(Vec3Test, RandomInUnitHemisphereGeneration) {
+	const int NORMAL_ITERATIONS = 32;
+
+	for(int n = 0; n < NORMAL_ITERATIONS; ++n) {
+		Vec3 avg = Vec3::zero();
+
+		const Vec3 normal = Vec3(
+			Random::inRange(-1.0, 1.0),
+			Random::inRange(-1.0, 1.0),
+			Random::inRange(-1.0, 1.0)
+		).normalized();
+
+		for(int i = 0; i < RANDOM_ITERATIONS; ++i) {
+			Vec3 randomVec = Vec3::randomInUnitHemisphere(normal);
+			avg += randomVec / RANDOM_ITERATIONS;
+
+			EXPECT_LE(randomVec.length(), 1.0);
+			EXPECT_GE(randomVec.dot(normal), 0.0);
+		}
+
+		// 0.375 = \int_0^1 \frac{x \pi (1 - x^2)}{\frac{\frac{4 \pi}{3}}{2}} dx
+		// 0.375 = \frac{ \int_0^1 x \pi (1 - x^2) dx }{\frac{\frac{4 \pi}{3}}{2}}
+		const double error = (0.375 * normal - avg).length();
+		EXPECT_LT(error, MAX_RANDOM_ERROR);
+	}
 }
 
 int main(int argc, char** argv) {
