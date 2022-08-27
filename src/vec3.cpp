@@ -164,7 +164,10 @@ Vec3 Vec3::reflected(const Vec3 &normal) const {
 }
 
 bool Vec3::canRefract(const Vec3 &normal, const double eta) const {
-	return true;
+	const Vec3 uv = this->normalized();
+	const double cosT1 = -uv.dot(normal);
+	const double sinT2 = eta * eta * (1.0 - cosT1 * cosT1);
+	return sinT2 <= 1.0;
 }
 
 Vec3 Vec3::refracted(const Vec3 &normal, const double eta) const {
