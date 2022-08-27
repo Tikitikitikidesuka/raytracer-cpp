@@ -260,13 +260,13 @@ TEST(Vec3Test, Reflection) {
 	normal = Vec3(0.0, -1.0, 0.0);
 
 	EXPECT_TRUE(closeEnough(
-		Vec3(1.0, 1.0, 0.0).reflection(Vec3(0.0, -1.0, 0.0)),
+		Vec3(1.0, 1.0, 0.0).reflected(Vec3(0.0, -1.0, 0.0)),
 		Vec3(1.0, -1.0, 0.0),
 		MAX_ERROR
 	));
 
 	EXPECT_TRUE(closeEnough(
-		Vec3(1.0, 1.0, 0.0).reflection(Vec3(0.0, 1.0, 0.0)),
+		Vec3(1.0, 1.0, 0.0).reflected(Vec3(0.0, 1.0, 0.0)),
 		Vec3(1.0, -1.0, 0.0),
 		MAX_ERROR
 	));
@@ -274,23 +274,71 @@ TEST(Vec3Test, Reflection) {
 	normal = Vec3(0.0362084247, 0.8860414516, -0.4621898918);
 
 	EXPECT_TRUE(closeEnough(
-		Vec3(8.12, 9.34, -2.83).reflection(normal),
+		Vec3(8.12, 9.34, -2.83).reflected(normal),
 		Vec3(7.40469, -8.16399, 6.30069),
 		MAX_ERROR
 	));
 
 	EXPECT_TRUE(closeEnough(
-		Vec3(8.12, 9.34, -2.83).reflection(-normal),
+		Vec3(8.12, 9.34, -2.83).reflected(-normal),
 		Vec3(7.40469, -8.16399, 6.30069),
 		MAX_ERROR
 	));
 
 	// User must make sure that the normal parameter is normalized
 	//EXPECT_TRUE(closeEnough(
-	//	Vec3(8.12, 9.34, -2.83).reflection(Vec3(normal * 3.1415)),
+	//	Vec3(8.12, 9.34, -2.83).reflected(Vec3(normal * 3.1415)),
 	//	Vec3(7.40469, -8.16399, 6.30069),
 	//	MAX_ERROR
 	//));
+}
+
+TEST(Vec3Test, CanRefractPerpendicular) {
+	EXPECT_TRUE(
+		Vec3(0.0, -1.0, 0.0).canRefract(Vec3(0.0, 1.0, 0.0), 1.0 / 1.5)
+	);
+}
+
+TEST(Vec3Test, CanRefractNormalCase) {
+	EXPECT_TRUE(
+		Vec3(1.0, -1.0, 0.0).canRefract(Vec3(0.0, 1.0, 0.0), 1.0 / 1.5)
+	);
+}
+
+TEST(Vec3Test, CanRefractParallelOut) {
+	EXPECT_TRUE(
+		Vec3(2.809843, -3.1415, 0.0).canRefract(Vec3(0.0, 1.0, 0.0), 1.5 / 1.0)
+	);
+}
+
+TEST(Vec3Test, CanRefractTotalInternalReflection) {
+	EXPECT_FALSE(
+		Vec3(2.809843021, -2.1415, 0.0).canRefract(Vec3(0.0, 1.0, 0.0), 1.5 / 1.0)
+	);
+}
+
+TEST(Vec3Test, RefractionPerpendicular) {
+	EXPECT_TRUE(closeEnough(
+		Vec3(0.0, -1.0, 0.0).refracted(Vec3(0.0, 1.0, 0.0), 1.0 / 1.5),
+		Vec3(0.0, -1.0, 0.0),
+		MAX_ERROR
+	));
+}
+
+TEST(Vec3Test, RefractionNormalCase) {
+	EXPECT_TRUE(closeEnough(
+		Vec3(1.0, -1.0, 0.0).refracted(Vec3(0.0, 1.0, 0.0), 1.0 / 1.5),
+		Vec3(0.6667, -1.2472, 0.0),
+		MAX_ERROR
+	));
+}
+
+TEST(Vec3Test, RefractionParallelOut) {
+	EXPECT_TRUE(closeEnough(
+		Vec3(2.809843021, -3.1415, 0.0).refracted(Vec3(0.0, 1.0, 0.0), 1.5 / 1.0),
+		Vec3(4.2147, 0.0, 0.0),
+		MAX_ERROR
+	));
 }
 
 TEST(Vec3Test, RandomUnitGeneration) {
