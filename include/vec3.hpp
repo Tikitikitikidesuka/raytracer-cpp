@@ -37,8 +37,10 @@ class Vec3 {
 
 		double distanceTo(const Vec3 &v) const;
 
-		Vec3 reflection(const Vec3 &normal) const;
-		Vec3 refraction(const Vec3 &normal, const double etai_over_etat) const;
+		Vec3 reflected(const Vec3 &normal) const;
+
+		bool canRefract(const Vec3 &normal, const double eta) const;
+		Vec3 refracted(const Vec3 &normal, const double eta) const;
 
 		double length() const;
 		double lengthSquared() const;

@@ -20,6 +20,7 @@ Color ray_color(const Ray3 &ray, const Ray3Hittable &objects, int depth);
 void write_color_ppm(std::ostream &out, Color color);
 
 int main() {
+	std::cerr << Vec3(8.12, 9.34, -2.83).reflected(Vec3(0.0362084247, 0.8860414516, -0.4621898918)) << "\n\n";
 	// Image
 	const double aspect_ratio = 16.0 / 9.0;
 	const int image_width = 640;//256;

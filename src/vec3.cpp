@@ -159,15 +159,20 @@ double Vec3::distanceTo(const Vec3 &v) const {
 	return (v - (*this)).length();
 }
 
-Vec3 Vec3::reflection(const Vec3 &normal) const {
+Vec3 Vec3::reflected(const Vec3 &normal) const {
 	return *this - 2.0 * this->dot(normal) * normal;
 }
 
-Vec3 Vec3::refraction(const Vec3 &normal, const double n1OverN2) const {
-	double cosTheta = fmin(-(*this).dot(normal), 1.0);
-	Vec3 outPerpendicular = n1OverN2 * ((*this) + cosTheta * normal);
+bool Vec3::canRefract(const Vec3 &normal, const double eta) const {
+	return true;
+}
+
+Vec3 Vec3::refracted(const Vec3 &normal, const double eta) const {
+	Vec3 uv = this->normalized();
+	double cosTheta = fmin(-uv.dot(normal), 1.0);
+	Vec3 outPerpendicular = eta * (uv + cosTheta * normal);
 	Vec3 outParallel = -sqrt(fabs(1.0 - outPerpendicular.lengthSquared())) * normal;
-	return outPerpendicular + outParallel;
+	return (outPerpendicular + outParallel) * this->length();
 }
 
 double Vec3::length() const {

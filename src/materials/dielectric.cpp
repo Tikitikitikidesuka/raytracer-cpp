@@ -25,9 +25,9 @@ bool DielectricMat::scatter(const Ray3 &rayIn, const Ray3HitRecord &hitRecord, C
 
 	Vec3 newDir;
 	if(cannotRefract || reflectance(cosTheta, refractionRatio) > Random::inRange(0.0, 1.0))
-		newDir = rayIn.getDirection().reflection(hitRecord.normal);
+		newDir = rayIn.getDirection().reflected(hitRecord.normal);
 	else
-		newDir = rayIn.getDirection().refraction(hitRecord.normal, refractionRatio);
+		newDir = rayIn.getDirection().refracted(hitRecord.normal, refractionRatio);
 
 	scattered = Ray3(hitRecord.position, newDir);
 	return true;
