@@ -160,12 +160,7 @@ double Vec3::distanceTo(const Vec3 &v) const {
 }
 
 Vec3 Vec3::reflection(const Vec3 &normal) const {
-	double dotProduct = (*this).dot(normal);
-
-	if(dotProduct < 0.0) 
-		dotProduct = -dotProduct;
-
-	return *this - 2.0 * dotProduct * normal;
+	return *this - 2.0 * this->dot(normal) * normal;
 }
 
 Vec3 Vec3::refraction(const Vec3 &normal, const double n1OverN2) const {
