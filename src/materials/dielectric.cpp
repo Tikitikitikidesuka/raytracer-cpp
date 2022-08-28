@@ -19,12 +19,10 @@ bool DielectricMat::scatter(const Ray3 &rayIn, const Ray3HitRecord &hitRecord, C
 	double refractionRatio = hitRecord.frontFace ? 1.0 / this->refractionIndex : this->refractionIndex;
 	
 	double cosTheta = fmin(-rayIn.getDirection().dot(hitRecord.normal), 1.0);
-	double sinTheta = sqrt(1.0 - cosTheta * cosTheta);
 
-	bool cannotRefract = refractionRatio * sinTheta > 1.0;
 
 	Vec3 newDir;
-	if(cannotRefract || reflectance(cosTheta, refractionRatio) > Random::inRange(0.0, 1.0))
+	if(rayIn.getDirection().canRefract(hitRecord.normal, refractionRatio) || reflectance(cosTheta, refractionRatio) > Random::inRange(0.0, 1.0))
 		newDir = rayIn.getDirection().reflected(hitRecord.normal);
 	else
 		newDir = rayIn.getDirection().refracted(hitRecord.normal, refractionRatio);
