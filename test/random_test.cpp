@@ -1,36 +1,62 @@
-#include <iostream>
-#include <cassert>
-#include <cmath>
+#include "gtest/gtest.h"
 
+#include <cmath>
 #include "random.hpp"
 
-void Random_in_range_test() {
-	std::cout << "Testing Random in range generator...\n";
+const int RANDOM_ITERATIONS = 4096;
 
-	const int iterations = 1024;
-	const double max_error = 0.25;
+TEST(RandomTest, InRangeHasUniformDistributionMean) {
+	const double MAX_ERROR = 0.01;
 
 	double avg = 0.0;
-	for(int i = 0; i < iterations; ++i) {
-		double random = Random::inRange(-1.0, 1.0);
-		assert(random >= -1.0 && random <= 1.0);
-		avg += random / (double) iterations;
-	}
-	std::cout << "Random generator from -1.0 to 1.0 average is " << avg << '\n';
-	assert(fabs(avg) < max_error);
 
-	for(int i = 0; i < iterations; ++i) {
-		double random = Random::inRange(0.0, 1.0);
-		assert(random >= 0.0 && random <= 1.0);
-		avg += random / (double) iterations;
+	for(int i = 0; i < RANDOM_ITERATIONS; ++i) {
+		avg += Random::inRange(0.0, 1.0) / RANDOM_ITERATIONS;
 	}
-	std::cout << "Random generator from 0.0 to 1.0 average is " << avg << '\n';
-	assert(fabs(0.5 - avg) < max_error);
 
-	std::cout << "Random in range generator works!\n";
+
+	// 0.5 = \frac{1}{2} (1 - 0)
+	EXPECT_NEAR(avg, 0.5, MAX_ERROR);
 }
 
-int main() {
-	Random_in_range_test();
-	return 0;
+TEST(RandomTest, InRangeHasUniformDistributionDeviation) {
+	const double MAX_ERROR = 0.01;
+
+	double variance = 0.0;
+
+	for(int i = 0; i < RANDOM_ITERATIONS; ++i) {
+		double error =  0.5 - Random::inRange(0.0, 1.0);
+		variance += error * error / RANDOM_ITERATIONS;
+	}
+
+	double deviation = sqrt(variance);
+
+	// 0.288675 = \sqrt{\frac{1}{12}(1 - 0)^2}
+	EXPECT_NEAR(deviation, 0.288675, MAX_ERROR);
+}
+
+TEST(RandomTest, InRangeIsWithinRangeOverZero) {
+	for(int i = 0; i < RANDOM_ITERATIONS; ++i) {
+		double randNum = Random::inRange(1.0, 3.0);
+		EXPECT_TRUE(randNum >= 1.0 && randNum <= 3.0);
+	}
+}
+
+TEST(RandomTest, InRangeIsWithinRangeUnderZero) {
+	for(int i = 0; i < RANDOM_ITERATIONS; ++i) {
+		double randNum = Random::inRange(-10.0, -2.0);
+		EXPECT_TRUE(randNum >= -10.0 && randNum <= -2.0);
+	}
+}
+
+TEST(RandomTest, InRangeIsWithinRangeAroundZero) {
+	for(int i = 0; i < RANDOM_ITERATIONS; ++i) {
+		double randNum = Random::inRange(-7.0, 5.0);
+		EXPECT_TRUE(randNum >= -7.0 && randNum <= 5.0);
+	}
+}
+
+int main(int argc, char** argv) {
+	::testing::InitGoogleTest(&argc, argv);
+	return RUN_ALL_TESTS();
 }
