@@ -1,164 +1,176 @@
-#include <iostream>
-#include <cassert>
+#include "gtest/gtest.h"
 
 #include "vec3.hpp"
 #include "color.hpp"
 
-void Color_black_test() {
-	std::cout << "Testing Color black generator...\n";
-
-	assert(Color::black() == Color(0.0, 0.0, 0.0));
-
-	std::cout << "Color black generator works!\n";
+TEST(ColorTest, BlackGenerator) {
+	EXPECT_EQ(Color::black(), Color(0.0, 0.0, 0.0));
 }
 
-void Color_white_test() {
-	std::cout << "Testing Color white generator...\n";
-
-	assert(Color::white() == Color(1.0, 1.0, 1.0));
-
-	std::cout << "Color white generator works!\n";
+TEST(ColorTest, WhiteGenerator) {
+	EXPECT_EQ(Color::white(), Color(1.0, 1.0, 1.0));
 }
 
-void Color_from_Vec3_test() {
-	std::cout << "Testing Color from Vec3 generator...\n";
-
-	Vec3 v = Vec3(1.0, 1.0, 1.0);
-	Color c = Color(v);
-	assert(c == Color(1.0, 1.0, 1.0));
-	
-	v.setX(0.0);
-	assert(c == Color(1.0, 1.0, 1.0));
-
-	std::cout << "Color from Vec3 generator works!\n";
+TEST(ColorTest, FromVec3Generator) {
+	EXPECT_EQ(Color(0.5, 0.25, 0.125), Color(Vec3(0.5, 0.25, 0.125)));
 }
 
-void Color_equals_operator_test() {
-	std::cout << "Testing Color \"==\" operator...\n";
-
-	assert(Color(0.23, 0.43, 0.92) == Color(0.23, 0.43, 0.92));
-	assert(!(Color(0.53, 0.43, 0.92) == Color(0.23, 0.43, 0.92)));
-
-	Color c = Color(0.23, 0.82, 0.13);
-	assert(c == c);
-
-	std::cout << "Color \"==\" operator works!\n";
+TEST(ColorTest, FromVec3GeneratorOutsideColorRange) {
+	EXPECT_EQ(Color(-0.5, -2.0, 4.0), Color(Vec3(-0.5, -2.0, 4.0)));
 }
 
-void Color_not_equals_operator_test() {
-	std::cout << "Testing Color \"!=\" operator...\n";
+TEST(ColorTest, EqualsDifferentInstance) {
+	Color c1 = Color(0.5, 0.25, 0.125);
+	Color c2 = Color(0.5, 0.25, 0.125);
+	EXPECT_TRUE(c1 == c2);
+	EXPECT_TRUE(c2 == c1);
 
-	assert(Color(0.53, 0.43, 0.92) != Color(0.23, 0.43, 0.92));
-	assert(!(Color(0.23, 0.43, 0.92) != Color(0.23, 0.43, 0.92)));
-
-	Color c = Color(0.23, 0.82, 0.13);
-	assert(!(c != c));
-
-	std::cout << "Color \"!=\" operator works!\n";
+	Color c3;
+	c3 = Color(0.3, 0.25, 0.125);
+	EXPECT_FALSE(c1 == c3);
+	c3 = Color(0.5, 0.05, 0.125);
+	EXPECT_FALSE(c1 == c3);
+	c3 = Color(0.5, 0.25, 0.25);
+	EXPECT_FALSE(c1 == c3);
 }
 
-void Color_addition_operator_test() {
-	std::cout << "Testing Color \"+\" operator...\n";
+TEST(ColorTest, EqualsConstant) {
+	Color c = Color(0.5, 0.25, 0.125);
+	EXPECT_TRUE(c == Color(0.5, 0.25, 0.125));
+	EXPECT_TRUE(Color(0.5, 0.25, 0.125) ==  c);
 
-	assert(Color(0.25, 0.5, 1.0) + Color(-0.25, 0.5, -1.0) == Color(0.0, 1.0, 0.0));
-
-	// If Color should clamp
-	// assert(Color(1.0, 0.5, 0.25) + Color(0.25, 0.5, 1.0) == Color(1.0, 1.0, 1.0));
-	
-	// If Color should not clamp
-	assert(Color(1.0, 0.5, 0.25) + Color(0.25, 0.5, 1.0) == Color(1.25, 1.0, 1.25));
-
-	std::cout << "Color \"+\" operator works!\n";
+	EXPECT_FALSE(c == Color(0.3, 0.25, 0.125));
+	EXPECT_FALSE(c == Color(0.3, 0.25, 0.125));
+	EXPECT_FALSE(c == Color(0.3, 0.25, 0.125));
 }
 
-void Color_subtraction_operator_test() {
-	std::cout << "Testing Color \"-\" operator...\n";
-
-	assert(Color(0.25, 0.5, 1.0) - Color(-0.25, 0.5, -1.0) == Color(0.5, 0.0, 2.0));
-
-	// If Color should clamp
-	// assert(Color(1.0, 0.5, 0.25) + Color(0.25, 0.5, 1.0) == Color(1.0, 1.0, 1.0));
-	
-	// If Color should not clamp
-	assert(Color(1.0, 0.5, 0.25) - Color(0.25, -0.5, 2.0) == Color(0.75, 1.0, -1.75));
-
-	std::cout << "Color \"-\" operator works!\n";
+TEST(ColorTest, EqualsItself) {
+	Color c = Color(0.5, 0.25, 0.125);
+	EXPECT_EQ(c, c);
 }
 
-void Color_multiplication_by_scalar_test() {
-	std::cout << "Testing Color \"*\" operator...\n";
+TEST(ColorTest, NotEqualsDifferentInstance) {
+	Color c2;
+	Color c1 = Color(0.5, 0.25, 0.125);
 
-	assert(Color(0.0, 0.25, 0.5) * 2.0 == Color(0.0, 0.5, 1.0));
-	assert(2.0 * Color(0.0, 0.25, 0.5) == Color(0.0, 0.5, 1.0));
+	c2 = Color(0.25, 0.25, 0.125);
+	EXPECT_TRUE(c1 != c2);
+	EXPECT_TRUE(c2 != c1);
+	c2 = Color(0.5, 0.5, 0.125);
+	EXPECT_TRUE(c1 != c2);
+	EXPECT_TRUE(c2 != c1);
+	c2 = Color(0.5, 0.25, 0.25);
+	EXPECT_TRUE(c1 != c2);
+	EXPECT_TRUE(c2 != c1);
 
-	std::cout << "Vec3 \"*\" operator works!\n";
+	Color c3 = Color(0.5, 0.25, 0.125);
+	EXPECT_FALSE(c1 != c3);
 }
 
-void Color_division_by_scalar_test() {
-	std::cout << "Testing Color \"/\" operator...\n";
+TEST(ColorTest, NotEqualsConstant) {
+	Color c1 = Color(0.5, 0.25, 0.125);
 
-	assert(Color(0.0, 0.5, 1.0) / 2.0 == Color(0.0, 0.25, 0.5));
+	EXPECT_TRUE(c1 != Color(0.25, 0.25, 0.125));
+	EXPECT_TRUE(Color(0.25, 0.25, 0.125) != c1);
+	EXPECT_TRUE(c1 != Color(0.5, 0.5, 0.125));
+	EXPECT_TRUE(Color(0.5, 0.5, 0.125) != c1);
+	EXPECT_TRUE(c1 != Color(0.5, 0.25, 0.25));
+	EXPECT_TRUE(Color(0.5, 0.25, 0.25) != c1);
 
-	std::cout << "Vec3 \"/\" operator works!\n";
+	EXPECT_FALSE(c1 != Color(0.5, 0.25, 0.125));
 }
 
-void Color_addition_assignment_operator_test() {
-	std::cout << "Testing Color \"+=\" operator...\n";
+TEST(ColorTest, NotNotEqualsItself) {
+	Color c = Color(0.5, 0.25, 0.125);
+	EXPECT_FALSE(c != c);
+}
 
-	Color c = Color(0.0, 0.5, 0.25);
-	c += Color(1.0, 0.5, 0.25);
-	assert(c == Color(1.0, 1.0, 0.5));
+TEST(ColorTest, AdditionOperator) {
+	EXPECT_EQ(Color(0.5, 0.25, 0.125) + Color(0.5, 0.25, 0.125), Color(1.0, 0.5, 0.25));
+	EXPECT_EQ(Color(0.5, 0.25, 0.125) + Color(-0.5, -0.25, -0.125), Color(0.0, 0.0, 0.0));
+}
+
+TEST(ColorTest, AdditionOperatorOutsideColorRange) {
+	EXPECT_EQ(Color(0.5, 0.75, -1.0) + Color(-1.0, 0.5, -1.0), Color(-0.5, 1.25, -2.0));
+}
+
+TEST(ColorTest, SubtractionOperator) {
+	EXPECT_EQ(Color(0.5, 0.25, 0.125) - Color(0.25, 0.125, 0.0), Color(0.25, 0.125, 0.125));
+}
+
+TEST(ColorTest, SubtractionOperatorOutsideColorRange) {
+	EXPECT_EQ(Color(0.5, 0.25, 0.125) - Color(2.0, 1.0, 0.5), Color(-1.5, -0.75, -0.375));
+}
+
+TEST(ColorTest, MultiplicationByScalarOperator) {
+	EXPECT_EQ(Color(0.0, 0.25, 0.5) * 2.0, Color(0.0, 0.5, 1.0));
+	EXPECT_EQ(2.0 * Color(0.0, 0.25, 0.5), Color(0.0, 0.5, 1.0));
+}
+
+TEST(ColorTest, MultiplicationByScalarOperatorOutsideColorRange) {
+	EXPECT_EQ(Color(0.0, 1.0, 2.5) * 2.0, Color(0.0, 2.0, 5.0));
+	EXPECT_EQ(2.0 * Color(0.0, 1.0, 2.5), Color(0.0, 2.0, 5.0));
+}
+
+TEST(ColorTest, MultiplicationOperator) {
+	EXPECT_EQ(Color(1.0, 0.5, 0.25) * Color(1.0, 0.5, 0.25), Color(1.0, 0.25, 0.0625));
+}
+
+TEST(ColorTest, MultiplicationOperatorOutsideColorRange) {
+	EXPECT_EQ(Color(2.0, 1.0, -3.0) * Color(0.5, 0.25, 1.0), Color(1.0, 0.25, -3.0));
+}
+
+TEST(ColorTest, DivisionByScalarOperator) {
+	EXPECT_EQ(Color(0.0, 0.5, 1.0) / 2.0, Color(0.0, 0.25, 0.5));
+}
+
+TEST(ColorTest, DivisionByScalarOperatorOutsideColorRange) {
+	EXPECT_EQ(Color(4.0, 2.0, 1.0) / 0.5, Color(8.0, 4.0, 2.0));
+}
+
+TEST(ColorTest, AdditionAssignmentOperator) {
+	Color c = Color(0.0, 0.25, 0.5);
+	c += Color(1.0, 0.25, 0.5);
+	EXPECT_EQ(c, Color(1.0, 0.5, 1.0));
 
 	c = Color(0.0, 0.5, 0.25);
 	c += c;
-	assert(c == Color(0.0, 1.0, 0.5));
-
-	std::cout << "Color \"+=\" operator works!\n";
+	EXPECT_EQ(c, Color(0.0, 1.0, 0.5));
 }
 
-void Color_subraction_assignment_operator_test() {
-	std::cout << "Testing Color \"-=\" operator...\n";
+TEST(ColorTest, SubtractionAssignment) {
+	Color c = Color(1.0, 0.25, 0.5);
+	c -= Color(0.0, 0.25, 0.5);
+	EXPECT_EQ(c, Color(1.0, 0.0, 0.0));
+}
 
+TEST(ColorTest, MultiplicationAssignmentConstant) {
 	Color c = Color(1.0, 0.5, 0.25);
-	c -= Color(0.0, 0.5, 0.125);
-	assert(c == Color(1.0, 0.0, 0.125));
-
-	std::cout << "Color \"-=\" operator works!\n";
+	c *= Color(0.25, 0.5, 1.0);
+	EXPECT_EQ(c, Color(0.25, 0.25, 0.25));
 }
 
-void Color_multiplication_by_scalar_assignment_test() {
-	std::cout << "Testing Color \"*=\" operator...\n";
+TEST(ColorTest, MultiplicationAssignmentDifferentInstance) {
+	Color c = Color(1.0, 0.5, 0.25);
+	Color aux = Color(0.25, 0.5, 1.0);
+	c *= aux;
+	EXPECT_EQ(c, Color(0.25, 0.25, 0.25));
+}
 
+TEST(ColorTest, MultiplicationAssignmentItself) {
+	Color c = Color(1.0, 0.5, 0.25);
+	c *= c;
+	EXPECT_EQ(c, Color(1.0, 0.25, 0.0625));
+}
+
+TEST(ColorTest, MultiplicationByScalarAssignment) {
 	Color c = Color(0.0, 0.5, 0.25);
 	c *= 2.0;
-	assert(c == Color(0.0, 1.0, 0.5));
-
-	std::cout << "Color \"*=\" operator works! \n";
+	EXPECT_EQ(c, Color(0.0, 1.0, 0.5));
 }
 
-void Color_division_by_scalar_assignment_test() {
-	std::cout << "Testing Color \"/=\" operator...\n";
-
+TEST(ColorTest, DivisionByScalarAssignment) {
 	Color c = Color(0.0, 0.5, 0.25);
 	c /= 2.0;
-	assert(c == Color(0.0, 0.25, 0.125));
-
-	std::cout << "Color \"/=\" operator works!\n";
-}
-
-int main() {
-	Color_black_test();
-	Color_white_test();
-	Color_from_Vec3_test();
-	Color_equals_operator_test();
-	Color_not_equals_operator_test();
-	Color_addition_operator_test();
-	Color_subtraction_operator_test();
-	Color_multiplication_by_scalar_test();
-	Color_division_by_scalar_test();
-	Color_addition_assignment_operator_test();
-	Color_subraction_assignment_operator_test();
-	Color_multiplication_by_scalar_assignment_test();
-	Color_division_by_scalar_assignment_test();
-	return 0;
+	EXPECT_EQ(c, Color(0.0, 0.25, 0.125));
 }

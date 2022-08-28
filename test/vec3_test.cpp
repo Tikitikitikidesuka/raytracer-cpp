@@ -22,6 +22,7 @@ TEST(Vec3Test, EqualsDifferentInstance) {
 	Vec3 v1 = Vec3(0.5, -2.0, 0.125);
 	Vec3 v2 = Vec3(0.5, -2.0, 0.125);
 	EXPECT_EQ(v1, v2);
+	EXPECT_EQ(v2, v1);
 }
 
 TEST(Vec3Test, EqualsConstant) {
@@ -41,12 +42,15 @@ TEST(Vec3Test, NotEqualsDifferentInstance) {
 
 	v2 = Vec3(0.25, -2.0, 0.125);
 	EXPECT_NE(v1, v2);
+	EXPECT_NE(v2, v1);
 	
 	v2 = Vec3(0.5, -2.5, 0.125);
 	EXPECT_NE(v1, v2);
+	EXPECT_NE(v2, v1);
 
 	v2 = Vec3(0.5, -2.0, -0.125);
 	EXPECT_NE(v1, v2);
+	EXPECT_NE(v2, v1);
 }
 
 TEST(Vec3Test, NotEqualsConstant) {
@@ -63,8 +67,8 @@ TEST(Vec3Test, NotEqualsConstant) {
 }
 
 TEST(Vec3Test, NotNotEqualsItself) {
-	Vec3 v1 = Vec3(0.5, -2.0, 0.125);
-	EXPECT_FALSE(v1 != v1);
+	Vec3 v = Vec3(0.5, -2.0, 0.125);
+	EXPECT_FALSE(v != v);
 }
 
 TEST(Vec3Test, NegativeOperator) {
