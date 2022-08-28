@@ -21,19 +21,31 @@ TEST(Vec3Test, GeneratesZero) {
 TEST(Vec3Test, EqualsDifferentInstance) {
 	Vec3 v1 = Vec3(0.5, -2.0, 0.125);
 	Vec3 v2 = Vec3(0.5, -2.0, 0.125);
-	EXPECT_EQ(v1, v2);
-	EXPECT_EQ(v2, v1);
+	EXPECT_TRUE(v1 == v2);
+	EXPECT_TRUE(v2 == v1);
+
+	Vec3 v3;
+	v3 = Vec3(0.1, -2.0, 0.125);
+	EXPECT_FALSE(v1 == v3);
+	v3 = Vec3(0.5, 3.4, 0.125);
+	EXPECT_FALSE(v1 == v3);
+	v3 = Vec3(0.5, -2.0, 0.5);
+	EXPECT_FALSE(v1 == v3);
 }
 
 TEST(Vec3Test, EqualsConstant) {
 	Vec3 v1 = Vec3(0.5, -2.0, 0.125);
-	EXPECT_EQ(v1, Vec3(0.5, -2.0, 0.125));
-	EXPECT_EQ(Vec3(0.5, -2.0, 0.125), v1);
+	EXPECT_TRUE(v1 == Vec3(0.5, -2.0, 0.125));
+	EXPECT_TRUE(Vec3(0.5, -2.0, 0.125) == v1);
+
+	EXPECT_FALSE(v1 == Vec3(0.1, -2.0, 0.125));
+	EXPECT_FALSE(v1 == Vec3(0.5, 3.4, 0.125));
+	EXPECT_FALSE(v1 == Vec3(0.5, -2.0, 0.5));
 }
 
 TEST(Vec3Test, EqualsItself) {
 	Vec3 v = Vec3(0.5, -2.0, 0.125);
-	EXPECT_EQ(v, v);
+	EXPECT_TRUE(v == v);
 }
 
 TEST(Vec3Test, NotEqualsDifferentInstance) {
@@ -41,29 +53,30 @@ TEST(Vec3Test, NotEqualsDifferentInstance) {
 	Vec3 v1 = Vec3(0.5, -2.0, 0.125);
 
 	v2 = Vec3(0.25, -2.0, 0.125);
-	EXPECT_NE(v1, v2);
-	EXPECT_NE(v2, v1);
-	
+	EXPECT_TRUE(v1 == v2);
+	EXPECT_TRUE(v2 == v1);
 	v2 = Vec3(0.5, -2.5, 0.125);
-	EXPECT_NE(v1, v2);
-	EXPECT_NE(v2, v1);
-
+	EXPECT_TRUE(v1 == v2);
+	EXPECT_TRUE(v2 == v1);
 	v2 = Vec3(0.5, -2.0, -0.125);
-	EXPECT_NE(v1, v2);
-	EXPECT_NE(v2, v1);
+	EXPECT_TRUE(v1 == v2);
+	EXPECT_TRUE(v2 == v1);
+
+	Vec3 v3 = Vec3(0.5, -2.0, 0.125);
+	EXPECT_FALSE(v3 == v1);
 }
 
 TEST(Vec3Test, NotEqualsConstant) {
 	Vec3 v1 = Vec3(0.5, -2.0, 0.125);
 
-	EXPECT_NE(v1, Vec3(0.25, -2.0, 0.125));
-	EXPECT_NE(Vec3(0.25, -2.0, 0.125), v1);
+	EXPECT_TRUE(v1 == Vec3(0.25, -2.0, 0.125));
+	EXPECT_TRUE(Vec3(0.25, -2.0, 0.125) == v1);
+	EXPECT_TRUE(v1 == Vec3(0.5, -2.5, 0.125));
+	EXPECT_TRUE(Vec3(0.5, -2.5, 0.125) == v1);
+	EXPECT_TRUE(v1 == Vec3(0.5, -2.0, -0.125));
+	EXPECT_TRUE(Vec3(0.5, -2.0, -0.125) == v1);
 
-	EXPECT_NE(v1, Vec3(0.5, -2.5, 0.125));
-	EXPECT_NE(Vec3(0.5, -2.5, 0.125), v1);
-
-	EXPECT_NE(v1, Vec3(0.5, -2.0, -0.125));
-	EXPECT_NE(Vec3(0.5, -2.0, -0.125), v1);
+	EXPECT_FALSE(v1 != Vec3(0.5, -2.0, 0.125));
 }
 
 TEST(Vec3Test, NotNotEqualsItself) {
