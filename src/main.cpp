@@ -67,12 +67,12 @@ int main() {
 
 	for(int j = image_height - 1; !quit && j >= 0; --j) {
 		for(int i = 0; !quit && i < image_width; ++i) {
-			SDL_WaitEvent(&event);
-
-			switch (event.type) {
-				case SDL_QUIT:
-					quit = true;
-					break;
+			while(SDL_PollEvent(&event)) {
+				switch (event.type) {
+					case SDL_QUIT:
+						quit = true;
+						break;
+				}
 			}
 
 			Color pixel_color(0.0, 0.0, 0.0);
@@ -89,15 +89,18 @@ int main() {
 
 			SDL_SetRenderDrawColor(
 				renderer,
-				255,//colorToByte(pixel_color.getR()),
-				255,//colorToByte(pixel_color.getG()),
-				255,//colorToByte(pixel_color.getB()),
+				colorToByte(pixel_color.getR()),
+				colorToByte(pixel_color.getG()),
+				colorToByte(pixel_color.getB()),
 				255	
 			);
-			SDL_RenderDrawPoint(renderer, j, i);
+			SDL_RenderDrawPoint(renderer, i, image_height - j);
 			SDL_RenderPresent(renderer);
 		}
 	}
+
+	// Wait until window is closed
+	while(SDL_WaitEvent(&event) && event.type != SDL_QUIT);
 
 	// Free SDL resources
 	SDL_DestroyRenderer(renderer);
@@ -105,12 +108,6 @@ int main() {
 
 	// Terminate SDL
 	SDL_Quit();
-
-
-
-
-
-
 
 	return 0;
 }
