@@ -38,13 +38,12 @@ int main() {
 	auto material_mirror = make_shared<MetalMat>(Color(0.8, 0.8, 0.8), 0.0);
 	auto material_left = make_shared<MetalMat>(Color(1.0, 0.5, 0.5), 0.01);
 	auto material_right = make_shared<MetalMat>(Color(0.5, 1.0, 0.5), 0.7);
-	auto material_center = make_shared<DielectricMat>(-0.45);
 	auto material_ground = make_shared<LambertianMat>(Color(0.5, 0.5, 1.0));
 
 	Ray3HittableList objects;
 	objects.add(make_shared<Triangle>(Vec3(-0.2, 0.0, -3.0), Vec3(0.0, 0.0, -2.5), Vec3(-0.1, 1.0, -3.0), material_left));
 	objects.add(make_shared<Triangle>(Vec3(-0.2, 0.0, -6.0), Vec3(0.0, 0.3, -4.0), Vec3(0.2, 0.0, -5.0), material_left));
-	objects.add(make_shared<Sphere>(Vec3(-0.3, -0.45, -5.0), 0.5, material_left));
+	objects.add(make_shared<Sphere>(Vec3(-0.3, -0.15, -5.0), 0.5, material_left));
 	objects.add(make_shared<Sphere>(Vec3(0.6, -0.15, -5.2), 0.4, material_right));
 	//objects.add(make_shared<Sphere>(Vec3(-0.2, -0.3, -4.0), 0.1, material_center));
 	objects.add(make_shared<Sphere>(Vec3(0.0,-100.5,-10.0), 100, material_ground));
