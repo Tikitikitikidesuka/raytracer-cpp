@@ -53,28 +53,28 @@ TEST(Vec3Test, NotEqualsDifferentInstance) {
 	Vec3 v1 = Vec3(0.5, -2.0, 0.125);
 
 	v2 = Vec3(0.25, -2.0, 0.125);
-	EXPECT_TRUE(v1 == v2);
-	EXPECT_TRUE(v2 == v1);
+	EXPECT_TRUE(v1 != v2);
+	EXPECT_TRUE(v2 != v1);
 	v2 = Vec3(0.5, -2.5, 0.125);
-	EXPECT_TRUE(v1 == v2);
-	EXPECT_TRUE(v2 == v1);
+	EXPECT_TRUE(v1 != v2);
+	EXPECT_TRUE(v2 != v1);
 	v2 = Vec3(0.5, -2.0, -0.125);
-	EXPECT_TRUE(v1 == v2);
-	EXPECT_TRUE(v2 == v1);
+	EXPECT_TRUE(v1 != v2);
+	EXPECT_TRUE(v2 != v1);
 
 	Vec3 v3 = Vec3(0.5, -2.0, 0.125);
-	EXPECT_FALSE(v3 == v1);
+	EXPECT_FALSE(v1 != v3);
 }
 
 TEST(Vec3Test, NotEqualsConstant) {
 	Vec3 v1 = Vec3(0.5, -2.0, 0.125);
 
-	EXPECT_TRUE(v1 == Vec3(0.25, -2.0, 0.125));
-	EXPECT_TRUE(Vec3(0.25, -2.0, 0.125) == v1);
-	EXPECT_TRUE(v1 == Vec3(0.5, -2.5, 0.125));
-	EXPECT_TRUE(Vec3(0.5, -2.5, 0.125) == v1);
-	EXPECT_TRUE(v1 == Vec3(0.5, -2.0, -0.125));
-	EXPECT_TRUE(Vec3(0.5, -2.0, -0.125) == v1);
+	EXPECT_TRUE(v1 != Vec3(0.25, -2.0, 0.125));
+	EXPECT_TRUE(Vec3(0.25, -2.0, 0.125) != v1);
+	EXPECT_TRUE(v1 != Vec3(0.5, -2.5, 0.125));
+	EXPECT_TRUE(Vec3(0.5, -2.5, 0.125) != v1);
+	EXPECT_TRUE(v1 != Vec3(0.5, -2.0, -0.125));
+	EXPECT_TRUE(Vec3(0.5, -2.0, -0.125) != v1);
 
 	EXPECT_FALSE(v1 != Vec3(0.5, -2.0, 0.125));
 }
