@@ -1,6 +1,8 @@
 #include <iostream>
 #include <limits>
 
+#include <SDL.h>
+
 #include "utils.hpp"
 #include "vec3.hpp"
 #include "ray3.hpp"
@@ -17,7 +19,7 @@
 #include "hittables/triangle.hpp"
 
 Color ray_color(const Ray3 &ray, const Ray3Hittable &objects, int depth);
-void write_color_ppm(std::ostream &out, Color color);
+unsigned char colorToByte(double color);
 
 int main() {
 	// Image
@@ -27,34 +29,54 @@ int main() {
 	const double gammaCorrection = 0.5;
 	const int samples_per_pixel = 128;
 	const int max_bounces = 32;
-	
-	//Camera
+
+	// Camera
 	Camera camera(Vec3(0.0, 0.0, 0.0), 2.0 * aspect_ratio, 2.0, degToRad(35.0));
 
-	// Scene
-	//auto material_left = make_shared<LambertianMat>(Color(0.584, 0.322, 0.651));
-	//auto material_right = make_shared<LambertianMat>(Color(0.733, 0.235, 0.741));
-	//auto material_ground = make_shared<LambertianMat>(Color(0.384, 0.235, 0.408));
+	// Scene materials
 	auto material_mirror = make_shared<MetalMat>(Color(0.8, 0.8, 0.8), 0.0);
 	auto material_left = make_shared<MetalMat>(Color(1.0, 0.5, 0.5), 0.01);
 	auto material_right = make_shared<MetalMat>(Color(0.5, 1.0, 0.5), 0.7);
 	auto material_ground = make_shared<LambertianMat>(Color(0.5, 0.5, 1.0));
 
+	// Scene objects
 	Ray3HittableList objects;
 	objects.add(make_shared<Triangle>(Vec3(-0.2, 0.0, -3.0), Vec3(0.0, 0.0, -2.5), Vec3(-0.1, 1.0, -3.0), material_left));
 	objects.add(make_shared<Triangle>(Vec3(-0.2, 0.0, -6.0), Vec3(0.0, 0.3, -4.0), Vec3(0.2, 0.0, -5.0), material_left));
 	objects.add(make_shared<Sphere>(Vec3(-0.3, -0.15, -5.0), 0.5, material_left));
 	objects.add(make_shared<Sphere>(Vec3(0.6, -0.15, -5.2), 0.4, material_right));
-	//objects.add(make_shared<Sphere>(Vec3(-0.2, -0.3, -4.0), 0.1, material_center));
 	objects.add(make_shared<Sphere>(Vec3(0.0,-100.5,-10.0), 100, material_ground));
 
-	std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
+	// Initialize SDL and create window
+	SDL_Init(SDL_INIT_VIDEO);
+	SDL_Window *window = SDL_CreateWindow(
+		"Raytracer", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+		image_width, image_height, 0
+	);
 
-	for(int j = image_height - 1; j >= 0; --j) {
-		std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
-		for(int i = 0; i < image_width; ++i) {
+	// Create SDL renderer
+	SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, 0);
+
+	// Clear window
+	SDL_SetRenderDrawColor(renderer, 0.0, 0.0, 0.0, 0.0);
+	SDL_RenderClear(renderer);
+
+	// SDL event data
+	bool quit = false;
+	SDL_Event event;
+
+	for(int j = image_height - 1; !quit && j >= 0; --j) {
+		for(int i = 0; !quit && i < image_width; ++i) {
+			SDL_WaitEvent(&event);
+
+			switch (event.type) {
+				case SDL_QUIT:
+					quit = true;
+					break;
+			}
+
 			Color pixel_color(0.0, 0.0, 0.0);
-			for(int s = 0; s < samples_per_pixel; ++s) {
+			for(int s = 0; !quit && s < samples_per_pixel; ++s) {
 				double u = (i + Random::inRange(0.0, 1.0))/ static_cast<double>(image_width - 1);
 				double v = (j + Random::inRange(0.0, 1.0)) / static_cast<double>(image_height - 1);
 
@@ -64,11 +86,31 @@ int main() {
 
 			pixel_color /= static_cast<double>(samples_per_pixel);
 			pixel_color = pixel_color.gammaCorrected(gammaCorrection);
-			write_color_ppm(std::cout, pixel_color);
+
+			SDL_SetRenderDrawColor(
+				renderer,
+				255,//colorToByte(pixel_color.getR()),
+				255,//colorToByte(pixel_color.getG()),
+				255,//colorToByte(pixel_color.getB()),
+				255	
+			);
+			SDL_RenderDrawPoint(renderer, j, i);
+			SDL_RenderPresent(renderer);
 		}
 	}
 
-	std::cerr << "\nDone.\n" << std::flush;
+	// Free SDL resources
+	SDL_DestroyRenderer(renderer);
+	SDL_DestroyWindow(window);
+
+	// Terminate SDL
+	SDL_Quit();
+
+
+
+
+
+
 
 	return 0;
 }
@@ -90,10 +132,6 @@ Color ray_color(const Ray3 &ray, const Ray3Hittable &objects, int depth) {
 	return (1.0 - t) * Color(1.0, 1.0, 1.0) + t * Color(0.5, 0.7, 1.0);
 }
 
-void write_color_ppm(std::ostream &out, Color color) {
-	color = color.clamped();
-
-	out 	<< static_cast<int>(255.999 * color.getR()) << ' '
-		<< static_cast<int>(255.999 * color.getG()) << ' '
-		<< static_cast<int>(255.999 * color.getB()) << '\n';
+unsigned char colorToByte(double color) {
+	return static_cast<unsigned char>(255.999 * color);
 }

@@ -30,6 +30,14 @@ list(REMOVE_ITEM SRC_FILES ${MAIN_SOURCE_FILE})
 
 add_executable(${CMAKE_PROJECT_NAME} ${SRC_FILES} ${MAIN_SOURCE_FILE})
 
+# Add external libraries
+
+find_package(SDL2 REQUIRED)
+
+include_directories(${SDL2_INCLUDE_DIRS})
+
+target_link_libraries(${CMAKE_PROJECT_NAME} ${SDL2_LIBRARIES})
+
 # Set up tests
 
 include(FetchContent)
