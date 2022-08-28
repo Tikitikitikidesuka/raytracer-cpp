@@ -28,6 +28,7 @@ class Color {
 		Color& operator+=(const Color &c);
 		Color& operator-=(const Color &c);
 		Color& operator*=(const double t);
+		Color& operator*=(const Color &c);
 		Color& operator/=(const double t);
 	
 	private:

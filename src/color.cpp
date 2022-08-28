@@ -127,6 +127,13 @@ Color& Color::operator*=(const double t) {
 	return *(this);
 }
 
+Color& Color::operator*=(const Color &c) {
+	this->setR(this->getR() * c.getR());
+	this->setG(this->getG() * c.getG());
+	this->setB(this->getB() * c.getB());
+	return *(this);
+}
+
 Color& Color::operator/=(const double t) {
 	this->rgbData /= t;
 	return *(this);
