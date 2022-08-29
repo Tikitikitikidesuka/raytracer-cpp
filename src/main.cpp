@@ -22,7 +22,7 @@ void write_color_ppm(std::ostream &out, Color color);
 int main() {
 	// Image
 	const double aspect_ratio = 16.0 / 9.0;
-	const int image_width = 640;//256;
+	const int image_width = 1280;
 	const int image_height = static_cast<int>(image_width / aspect_ratio);
 	const double gammaCorrection = 0.5;
 	const int samples_per_pixel = 128;
@@ -32,20 +32,15 @@ int main() {
 	Camera camera(Vec3(0.0, 0.0, 0.0), 2.0 * aspect_ratio, 2.0, degToRad(35.0));
 
 	// Scene
-	//auto material_left = make_shared<LambertianMat>(Color(0.584, 0.322, 0.651));
-	//auto material_right = make_shared<LambertianMat>(Color(0.733, 0.235, 0.741));
-	//auto material_ground = make_shared<LambertianMat>(Color(0.384, 0.235, 0.408));
-	auto material_mirror = make_shared<MetalMat>(Color(0.8, 0.8, 0.8), 0.0);
 	auto material_left = make_shared<MetalMat>(Color(1.0, 0.5, 0.5), 0.01);
 	auto material_right = make_shared<MetalMat>(Color(0.5, 1.0, 0.5), 0.7);
+	auto material_center_tri = make_shared<LambertianMat>(Color(0.2, 0.8, 1.0));
 	auto material_ground = make_shared<LambertianMat>(Color(0.5, 0.5, 1.0));
 
 	Ray3HittableList objects;
-	objects.add(make_shared<Triangle>(Vec3(-0.2, 0.0, -3.0), Vec3(0.0, 0.0, -2.5), Vec3(-0.1, 1.0, -3.0), material_left));
-	objects.add(make_shared<Triangle>(Vec3(-0.2, 0.0, -6.0), Vec3(0.0, 0.3, -4.0), Vec3(0.2, 0.0, -5.0), material_left));
+	objects.add(make_shared<Triangle>(Vec3(-0.2, 0.2, -6.0), Vec3(0.0, 0.5, -4.0), Vec3(0.2, 0.2, -5.0), material_center_tri));
 	objects.add(make_shared<Sphere>(Vec3(-0.3, -0.15, -5.0), 0.5, material_left));
 	objects.add(make_shared<Sphere>(Vec3(0.6, -0.15, -5.2), 0.4, material_right));
-	//objects.add(make_shared<Sphere>(Vec3(-0.2, -0.3, -4.0), 0.1, material_center));
 	objects.add(make_shared<Sphere>(Vec3(0.0,-100.5,-10.0), 100, material_ground));
 
 	std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
